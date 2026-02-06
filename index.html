@@ -157,6 +157,8 @@
         }
         .screen-content img {
             max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
             border-radius: 10px;
             margin: 10px 0;
         }
@@ -352,7 +354,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, set, onValue, remove, onChildAdded, onChildRemoved } 
+        import { getDatabase, ref, set, onValue, remove } 
             from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         // Your Firebase configuration
@@ -370,10 +372,13 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Global variables
-        let currentRoom = null;
-        let currentUser = 'User_' + Math.random().toString(36).substr(2, 6);
+        // Global variables - PERSIST across refresh!
+        let currentRoom = sessionStorage.getItem('swis_room') || null;
+        let currentUser = sessionStorage.getItem('swis_user') || 'User_' + Math.random().toString(36).substr(2, 6);
         let shareType = null;
+        
+        // Save user ID
+        sessionStorage.setItem('swis_user', currentUser);
         
         // Make functions global
         window.createRoom = createRoom;
@@ -384,6 +389,11 @@
         window.selectShareType = selectShareType;
         window.submitShare = submitShare;
         window.stopSharing = stopSharing;
+
+        // Auto-rejoin room on refresh
+        if (currentRoom) {
+            joinRoomWithCode(currentRoom, true);
+        }
 
         function createRoom() {
             const code = generateCode();
@@ -402,8 +412,9 @@
             joinRoomWithCode(code);
         }
 
-        function joinRoomWithCode(code) {
+        function joinRoomWithCode(code, isRejoin = false) {
             currentRoom = code;
+            sessionStorage.setItem('swis_room', code);
             
             // Add user to room
             const userRef = ref(db, `rooms/${code}/members/${currentUser}`);
@@ -412,62 +423,75 @@
                 joined: Date.now()
             });
 
-            // Listen for members
+            // Listen for ALL changes to members
             const membersRef = ref(db, `rooms/${code}/members`);
             onValue(membersRef, (snapshot) => {
-                updateScreens(snapshot.val() || {});
+                updateScreens();
             });
 
-            // Listen for shares
+            // Listen for ALL changes to shares - THIS FIXES THE UPDATE ISSUE
             const sharesRef = ref(db, `rooms/${code}/shares`);
-            onValue(sharesRef, () => {
-                // Trigger update when shares change
-                const membersRef = ref(db, `rooms/${code}/members`);
-                onValue(membersRef, (snapshot) => {
-                    updateScreens(snapshot.val() || {});
-                }, { onlyOnce: true });
+            onValue(sharesRef, (snapshot) => {
+                updateScreens();
             });
 
-            showRoom();
+            showRoom(isRejoin);
         }
 
-        function showRoom() {
+        function showRoom(isRejoin = false) {
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('roomScreen').classList.add('active');
             document.getElementById('displayCode').textContent = currentRoom;
+            
+            if (!isRejoin) {
+                updateScreens();
+            }
         }
 
-        async function updateScreens(members) {
+        function updateScreens() {
             const container = document.getElementById('screensContainer');
-            const memberCount = Object.keys(members).length;
             
-            document.getElementById('memberCount').textContent = memberCount;
-            
-            // Get shares
-            const sharesRef = ref(db, `rooms/${currentRoom}/shares`);
-            onValue(sharesRef, (snapshot) => {
-                const shares = snapshot.val() || {};
+            // Get members
+            const membersRef = ref(db, `rooms/${currentRoom}/members`);
+            onValue(membersRef, (membersSnapshot) => {
+                const members = membersSnapshot.val() || {};
+                const memberCount = Object.keys(members).length;
                 
-                let html = '';
-                for (let userId in members) {
-                    const isMe = userId === currentUser;
-                    const share = shares[userId];
-                    const shortName = isMe ? 'YOU' : userId.substr(5, 6).toUpperCase();
+                document.getElementById('memberCount').textContent = memberCount;
+                
+                // Get shares
+                const sharesRef = ref(db, `rooms/${currentRoom}/shares`);
+                onValue(sharesRef, (sharesSnapshot) => {
+                    const shares = sharesSnapshot.val() || {};
                     
-                    html += `
-                        <div class="screen-card">
-                            <div class="screen-header">
-                                <div class="user-name">${shortName}</div>
-                                ${share ? '<div class="live-badge">🔴 LIVE</div>' : ''}
+                    let html = '';
+                    for (let userId in members) {
+                        const isMe = userId === currentUser;
+                        const share = shares[userId];
+                        const shortName = isMe ? 'YOU' : userId.substr(5, 6).toUpperCase();
+                        
+                        html += `
+                            <div class="screen-card">
+                                <div class="screen-header">
+                                    <div class="user-name">${shortName}</div>
+                                    ${share ? '<div class="live-badge">🔴 LIVE</div>' : ''}
+                                </div>
+                                <div class="screen-content">
+                                    ${share ? renderShare(share) : '<div class="empty-state">Not sharing</div>'}
+                                </div>
                             </div>
-                            <div class="screen-content">
-                                ${share ? renderShare(share) : '<div class="empty-state">Not sharing</div>'}
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                container.innerHTML = html || '<div class="empty-state">Waiting for others...</div>';
+                        `;
+                        
+                        // Update stop button if this user is sharing
+                        if (isMe && share) {
+                            document.getElementById('stopBtn').classList.add('active');
+                        } else if (isMe && !share) {
+                            document.getElementById('stopBtn').classList.remove('active');
+                        }
+                    }
+                    
+                    container.innerHTML = html || '<div class="empty-state">Waiting for others...</div>';
+                }, { onlyOnce: true });
             }, { onlyOnce: true });
         }
 
@@ -533,7 +557,6 @@
             });
             
             closeShareModal();
-            document.getElementById('stopBtn').classList.add('active');
         }
 
         function readFile(file) {
@@ -547,7 +570,6 @@
         async function stopSharing() {
             const shareRef = ref(db, `rooms/${currentRoom}/shares/${currentUser}`);
             await remove(shareRef);
-            document.getElementById('stopBtn').classList.remove('active');
         }
 
         async function leaveRoom() {
@@ -561,6 +583,7 @@
             await remove(shareRef);
             
             currentRoom = null;
+            sessionStorage.removeItem('swis_room');
             
             document.getElementById('roomScreen').classList.remove('active');
             document.getElementById('welcomeScreen').style.display = 'flex';
