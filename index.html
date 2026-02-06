@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWIS - See What I See</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            font-size: 36px;
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .tagline {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        input, button, textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .room-code {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .room-code h2 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        .shared-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        .shared-item .author {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        .shared-item .content {
+            font-size: 16px;
+            color: #333;
+            word-wrap: break-word;
+        }
+        .shared-item img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .share-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .share-options button {
+            padding: 10px;
+            font-size: 14px;
+        }
+        #shareInput {
+            display: none;
+        }
+        .status {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="card">
+            <h1>📱 SWIS</h1>
+            <p class="tagline">See What I See - Share what's on your screen with the group</p>
+            
+            <button onclick="createRoom()">Create New Room</button>
+            
+            <div style="text-align: center; margin: 20px 0; color: #999;">or</div>
+            
+            <input type="text" id="joinCode" placeholder="Enter Room Code (e.g. TABLE5)" 
+                   style="text-transform: uppercase;">
+            <button onclick="joinRoom()">Join Room</button>
+        </div>
+
+        <!-- Room Screen -->
+        <div id="roomScreen" class="card hidden">
+            <h1>📱 SWIS</h1>
+            
+            <div class="room-code">
+                <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Room Code:</div>
+                <h2 id="displayCode"></h2>
+                <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                    <span id="memberCount">1</span> person in room
+                </div>
+            </div>
+
+            <div class="status" id="status">Connected</div>
+
+            <div style="margin: 20px 0;">
+                <div class="share-options">
+                    <button onclick="shareType('url')">📎 Share Link</button>
+                    <button onclick="shareType('text')">💬 Share Text</button>
+                </div>
+                
+                <div id="shareInput" class="hidden">
+                    <textarea id="shareContent" rows="3" 
+                              placeholder="Paste URL or type message..."></textarea>
+                    <button onclick="shareContent()">✨ Share with Group</button>
+                </div>
+            </div>
+
+            <div style="border-top: 2px solid #f0f0f0; padding-top: 20px;">
+                <h3 style="font-size: 18px; color: #667eea; margin-bottom: 15px;">
+                    📣 Shared by Group
+                </h3>
+                <div id="sharedItems"></div>
+            </div>
+
+            <button onclick="leaveRoom()" 
+                    style="background: #dc3545; margin-top: 20px;">
+                Leave Room
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Simple in-memory storage (will work for demo, resets on refresh)
+        let rooms = JSON.parse(localStorage.getItem('swis_rooms') || '{}');
+        let currentRoom = null;
+        let currentUser = 'User_' + Math.random().toString(36).substr(2, 5);
+        let pollInterval = null;
+
+        function saveRooms() {
+            localStorage.setItem('swis_rooms', JSON.stringify(rooms));
+        }
+
+        function createRoom() {
+            const code = generateCode();
+            currentRoom = code;
+            rooms[code] = {
+                members: [currentUser],
+                items: [],
+                created: Date.now()
+            };
+            saveRooms();
+            showRoom();
+        }
+
+        function generateCode() {
+            const words = ['TABLE', 'SOFA', 'CAFE', 'PUB', 'ROOM', 'DECK', 'YARD'];
+            const word = words[Math.floor(Math.random() * words.length)];
+            const num = Math.floor(Math.random() * 99) + 1;
+            return word + num;
+        }
+
+        function joinRoom() {
+            const code = document.getElementById('joinCode').value.toUpperCase().trim();
+            if (!code) {
+                alert('Please enter a room code');
+                return;
+            }
+            
+            if (!rooms[code]) {
+                rooms[code] = {
+                    members: [],
+                    items: [],
+                    created: Date.now()
+                };
+            }
+            
+            if (!rooms[code].members.includes(currentUser)) {
+                rooms[code].members.push(currentUser);
+            }
+            
+            currentRoom = code;
+            saveRooms();
+            showRoom();
+        }
+
+        function showRoom() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('roomScreen').classList.remove('hidden');
+            document.getElementById('displayCode').textContent = currentRoom;
+            
+            updateSharedItems();
+            
+            // Poll for updates every 2 seconds
+            pollInterval = setInterval(updateSharedItems, 2000);
+        }
+
+        function shareType(type) {
+            const input = document.getElementById('shareInput');
+            const textarea = document.getElementById('shareContent');
+            
+            if (type === 'url') {
+                textarea.placeholder = 'Paste a link (e.g., https://...)';
+            } else {
+                textarea.placeholder = 'Type your message...';
+            }
+            
+            input.classList.remove('hidden');
+            textarea.focus();
+        }
+
+        function shareContent() {
+            const content = document.getElementById('shareContent').value.trim();
+            if (!content) return;
+            
+            const item = {
+                author: currentUser,
+                content: content,
+                timestamp: Date.now(),
+                type: content.startsWith('http') ? 'url' : 'text'
+            };
+            
+            rooms[currentRoom].items.push(item);
+            saveRooms();
+            
+            document.getElementById('shareContent').value = '';
+            document.getElementById('shareInput').classList.add('hidden');
+            
+            updateSharedItems();
+        }
+
+        function updateSharedItems() {
+            // Reload from storage to get updates
+            rooms = JSON.parse(localStorage.getItem('swis_rooms') || '{}');
+            
+            if (!rooms[currentRoom]) return;
+            
+            const container = document.getElementById('sharedItems');
+            const items = rooms[currentRoom].items;
+            
+            document.getElementById('memberCount').textContent = 
+                rooms[currentRoom].members.length;
+            
+            if (items.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">No items shared yet. Be the first!</div>';
+                return;
+            }
+            
+            container.innerHTML = items.slice().reverse().map(item => {
+                const time = new Date(item.timestamp).toLocaleTimeString('en-GB', 
+                    { hour: '2-digit', minute: '2-digit' });
+                
+                let contentHTML = '';
+                if (item.type === 'url') {
+                    contentHTML = `<a href="${item.content}" target="_blank" 
+                                      style="color: #667eea; text-decoration: none; font-weight: bold;">
+                                      ${item.content}
+                                   </a>`;
+                } else {
+                    contentHTML = item.content;
+                }
+                
+                return `
+                    <div class="shared-item">
+                        <div class="author">${item.author} · ${time}</div>
+                        <div class="content">${contentHTML}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function leaveRoom() {
+            if (confirm('Leave this room?')) {
+                if (pollInterval) clearInterval(pollInterval);
+                
+                // Remove user from room
+                const idx = rooms[currentRoom].members.indexOf(currentUser);
+                if (idx > -1) {
+                    rooms[currentRoom].members.splice(idx, 1);
+                }
+                saveRooms();
+                
+                currentRoom = null;
+                document.getElementById('roomScreen').classList.add('hidden');
+                document.getElementById('welcomeScreen').classList.remove('hidden');
+                document.getElementById('joinCode').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
