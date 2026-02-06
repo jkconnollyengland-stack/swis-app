@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SWIS - See What I See</title>
+    <style>
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #000;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Welcome Screen */
+        .welcome-screen {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .welcome-card {
+            background: white;
+            border-radius: 30px;
+            padding: 40px 30px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .tagline {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        input {
+            width: 100%;
+            padding: 18px;
+            border-radius: 15px;
+            border: 2px solid #e0e0e0;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        button {
+            width: 100%;
+            padding: 18px;
+            border-radius: 15px;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 15px;
+        }
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+        .divider {
+            text-align: center;
+            color: #999;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        /* Carousel Screen */
+        .carousel-screen {
+            display: none;
+            height: 100vh;
+            background: #000;
+            position: relative;
+        }
+        .carousel-screen.active {
+            display: block;
+        }
+        
+        /* Top Bar */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .room-info {
+            color: white;
+            font-size: 14px;
+        }
+        .room-code-display {
+            font-weight: 700;
+            font-size: 18px;
+            color: #667eea;
+        }
+        .member-count {
+            font-size: 12px;
+            color: #999;
+        }
+        .leave-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Carousel Container */
+        .carousel-container {
+            position: absolute;
+            top: 70px;
+            bottom: 100px;
+            left: 0;
+            right: 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            display: flex;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .carousel-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Carousel Item (Each Person's Screen) */
+        .carousel-item {
+            min-width: 100%;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+        .screen-preview {
+            width: 100%;
+            max-width: 400px;
+            background: #1a1a1a;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .screen-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .user-name {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .live-indicator {
+            background: #ff3b30;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .screen-content {
+            background: white;
+            border-radius: 20px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .screen-content img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+        }
+        .screen-content a {
+            color: #667eea;
+            text-decoration: none;
+            word-break: break-all;
+            font-size: 16px;
+        }
+        .empty-screen {
+            color: #666;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Bottom Control Bar */
+        .control-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        .control-btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 15px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .share-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .stop-btn {
+            background: #ff3b30;
+            color: white;
+            display: none;
+        }
+        .stop-btn.active {
+            display: flex;
+        }
+
+        /* Share Modal */
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 200;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .share-modal.active {
+            display: flex;
+        }
+        .share-content {
+            background: white;
+            border-radius: 30px 30px 0 0;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .share-options {
+            display: grid;
+            gap: 15px;
+        }
+        .share-option {
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 15px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .share-option span {
+            font-size: 24px;
+        }
+        .cancel-btn {
+            margin-top: 15px;
+            background: #ff3b30;
+            color: white;
+        }
+
+        /* Input Modal */
+        .input-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .input-modal.active {
+            display: flex;
+        }
+        .input-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .input-content h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .input-content textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            min-height: 100px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+        .input-content input[type="file"] {
+            margin-bottom: 15px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Dots Indicator */
+        .dots-indicator {
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 50;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        .dot.active {
+            background: white;
+            width: 24px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-card">
+            <h1>📱</h1>
+            <h1 style="font-size: 42px; color: #667eea; margin-bottom: 5px;">SWIS</h1>
+            <p class="tagline">See What I See<br>Share screens with your group instantly</p>
+            
+            <button class="btn-primary" onclick="createRoom()">
+                ✨ Create New Room
+            </button>
+            
+            <div class="divider">or join existing</div>
+            
+            <input type="text" id="joinCode" placeholder="Enter Room Code" maxlength="10">
+            <button class="btn-primary" onclick="joinRoom()">
+                🚪 Join Room
+            </button>
+        </div>
+    </div>
+
+    <!-- Carousel Screen -->
+    <div id="carouselScreen" class="carousel-screen">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="room-info">
+                <div class="room-code-display" id="displayCode"></div>
+                <div class="member-count"><span id="memberCount">1</span> in room</div>
+            </div>
+            <button class="leave-btn" onclick="leaveRoom()">Leave</button>
+        </div>
+
+        <!-- Carousel Container -->
+        <div class="carousel-container" id="carousel">
+            <!-- Carousel items will be added here -->
+        </div>
+
+        <!-- Dots Indicator -->
+        <div class="dots-indicator" id="dotsIndicator"></div>
+
+        <!-- Bottom Control Bar -->
+        <div class="control-bar">
+            <button class="control-btn share-btn" onclick="openShareModal()">
+                <span>📤</span> Share Screen
+            </button>
+            <button class="control-btn stop-btn" id="stopBtn" onclick="stopSharing()">
+                <span>⏹</span> Stop Sharing
+            </button>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-content">
+            <h2 style="margin-bottom: 20px;">What do you want to share?</h2>
+            <div class="share-options">
+                <button class="share-option" onclick="shareOption('photo')">
+                    <span>📷</span>
+                    <div>
+                        <div>Photo / Screenshot</div>
+                        <div style="font-size: 12px; color: #999; font-weight: normal;">Share an image from your device</div>
+                    </div>
+                </button>
+                <button class="share-option" onclick="shareOption('link')">
+                    <span>🔗</span>
+                    <div>
+                        <div>Website Link</div>
+                        <div style="font-size: 12px; color: #999; font-weight: normal;">Share a webpage you're viewing</div>
+                    </div>
+                </button>
+                <button class="share-option" onclick="shareOption('text')">
+                    <span>💬</span>
+                    <div>
+                        <div>Text / Message</div>
+                        <div style="font-size: 12px; color: #999; font-weight: normal;">Share something you want to say</div>
+                    </div>
+                </button>
+            </div>
+            <button class="btn-secondary cancel-btn" onclick="closeShareModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Input Modal -->
+    <div class="input-modal" id="inputModal">
+        <div class="input-content">
+            <h3 id="inputTitle"></h3>
+            <textarea id="inputText" class="hidden" placeholder=""></textarea>
+            <input type="file" id="inputFile" class="hidden" accept="image/*">
+            <button class="btn-primary" onclick="submitShare()">✨ Share with Group</button>
+            <button class="btn-secondary" onclick="closeInputModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script>
+        // Firebase config - we'll add this later
+        let useFirebase = false;
+        
+        // Local storage fallback
+        let rooms = JSON.parse(localStorage.getItem('swis_rooms') || '{}');
+        let currentRoom = null;
+        let currentUser = 'User_' + Math.random().toString(36).substr(2, 5);
+        let currentShare = null;
+        let pollInterval = null;
+        let currentShareType = null;
+
+        function saveRooms() {
+            localStorage.setItem('swis_rooms', JSON.stringify(rooms));
+        }
+
+        function createRoom() {
+            const code = generateCode();
+            currentRoom = code;
+            rooms[code] = {
+                members: {[currentUser]: {name: currentUser, sharing: false}},
+                shares: {},
+                created: Date.now()
+            };
+            saveRooms();
+            showCarousel();
+        }
+
+        function generateCode() {
+            const words = ['TABLE', 'SOFA', 'CAFE', 'PUB', 'ROOM', 'DECK', 'YARD', 'BAR'];
+            const word = words[Math.floor(Math.random() * words.length)];
+            const num = Math.floor(Math.random() * 99) + 1;
+            return word + num;
+        }
+
+        function joinRoom() {
+            const code = document.getElementById('joinCode').value.toUpperCase().trim();
+            if (!code) {
+                alert('Please enter a room code');
+                return;
+            }
+            
+            if (!rooms[code]) {
+                rooms[code] = {
+                    members: {},
+                    shares: {},
+                    created: Date.now()
+                };
+            }
+            
+            rooms[code].members[currentUser] = {name: currentUser, sharing: false};
+            currentRoom = code;
+            saveRooms();
+            showCarousel();
+        }
+
+        function showCarousel() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('carouselScreen').classList.add('active');
+            document.getElementById('displayCode').textContent = currentRoom;
+            
+            updateCarousel();
+            pollInterval = setInterval(updateCarousel, 2000);
+        }
+
+        function updateCarousel() {
+            rooms = JSON.parse(localStorage.getItem('swis_rooms') || '{}');
+            if (!rooms[currentRoom]) return;
+            
+            const room = rooms[currentRoom];
+            const carousel = document.getElementById('carousel');
+            const dots = document.getElementById('dotsIndicator');
+            
+            document.getElementById('memberCount').textContent = Object.keys(room.members).length;
+            
+            // Build carousel items
+            let html = '';
+            let dotsHtml = '';
+            let index = 0;
+            
+            for (let userId in room.members) {
+                const member = room.members[userId];
+                const share = room.shares[userId];
+                const isMe = userId === currentUser;
+                
+                html += `
+                    <div class="carousel-item">
+                        <div class="screen-preview">
+                            <div class="screen-header">
+                                <div class="user-name">${isMe ? 'You' : member.name}</div>
+                                ${share ? '<div class="live-indicator"><div class="live-dot"></div> LIVE</div>' : ''}
+                            </div>
+                            <div class="screen-content">
+                                ${share ? renderShare(share) : '<div class="empty-screen">Not sharing</div>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                dotsHtml += `<div class="dot ${index === 0 ? 'active' : ''}"></div>`;
+                index++;
+            }
+            
+            carousel.innerHTML = html;
+            dots.innerHTML = dotsHtml;
+            
+            // Update dots on scroll
+            carousel.addEventListener('scroll', updateDots);
+        }
+
+        function renderShare(share) {
+            if (share.type === 'photo') {
+                return `<img src="${share.content}" alt="Shared photo">`;
+            } else if (share.type === 'link') {
+                return `<a href="${share.content}" target="_blank">${share.content}</a>`;
+            } else {
+                return `<div style="padding: 20px; text-align: center;">${share.content}</div>`;
+            }
+        }
+
+        function updateDots() {
+            const carousel = document.getElementById('carousel');
+            const items = carousel.querySelectorAll('.carousel-item');
+            const dots = document.querySelectorAll('.dot');
+            
+            const scrollLeft = carousel.scrollLeft;
+            const itemWidth = items[0]?.offsetWidth || 0;
+            const activeIndex = Math.round(scrollLeft / itemWidth);
+            
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === activeIndex);
+            });
+        }
+
+        function openShareModal() {
+            document.getElementById('shareModal').classList.add('active');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('active');
+        }
+
+        function shareOption(type) {
+            closeShareModal();
+            currentShareType = type;
+            
+            const modal = document.getElementById('inputModal');
+            const title = document.getElementById('inputTitle');
+            const textInput = document.getElementById('inputText');
+            const fileInput = document.getElementById('inputFile');
+            
+            textInput.classList.add('hidden');
+            fileInput.classList.add('hidden');
+            
+            if (type === 'photo') {
+                title.textContent = 'Select a photo to share';
+                fileInput.classList.remove('hidden');
+            } else if (type === 'link') {
+                title.textContent = 'Paste the website link';
+                textInput.placeholder = 'https://...';
+                textInput.classList.remove('hidden');
+            } else {
+                title.textContent = 'What do you want to say?';
+                textInput.placeholder = 'Type your message...';
+                textInput.classList.remove('hidden');
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function closeInputModal() {
+            document.getElementById('inputModal').classList.remove('active');
+            document.getElementById('inputText').value = '';
+            document.getElementById('inputFile').value = '';
+        }
+
+        async function submitShare() {
+            let content = '';
+            
+            if (currentShareType === 'photo') {
+                const file = document.getElementById('inputFile').files[0];
+                if (!file) return alert('Please select a photo');
+                
+                content = await readFileAsDataURL(file);
+            } else {
+                content = document.getElementById('inputText').value.trim();
+                if (!content) return alert('Please enter something to share');
+            }
+            
+            rooms[currentRoom].shares[currentUser] = {
+                type: currentShareType,
+                content: content,
+                timestamp: Date.now()
+            };
+            rooms[currentRoom].members[currentUser].sharing = true;
+            
+            saveRooms();
+            closeInputModal();
+            updateCarousel();
+            
+            document.getElementById('stopBtn').classList.add('active');
+        }
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function stopSharing() {
+            delete rooms[currentRoom].shares[currentUser];
+            rooms[currentRoom].members[currentUser].sharing = false;
+            saveRooms();
+            updateCarousel();
+            document.getElementById('stopBtn').classList.remove('active');
+        }
+
+        function leaveRoom() {
+            if (confirm('Leave this room?')) {
+                if (pollInterval) clearInterval(pollInterval);
+                
+                delete rooms[currentRoom].members[currentUser];
+                delete rooms[currentRoom].shares[currentUser];
+                saveRooms();
+                
+                currentRoom = null;
+                document.getElementById('carouselScreen').classList.remove('active');
+                document.getElementById('welcomeScreen').classList.remove('hidden');
+                document.getElementById('joinCode').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
