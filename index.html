@@ -98,30 +98,34 @@
         
         .room-header {
             background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin: 20px;
+            border-radius: 15px;
+            padding: 10px 15px;
+            margin: 10px 20px;
             text-align: center;
             flex-shrink: 0;
         }
         .room-code {
-            font-size: 32px;
+            font-size: 20px;
             font-weight: 700;
             color: #667eea;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
         .member-count {
             color: #999;
-            font-size: 14px;
+            font-size: 11px;
         }
         #qrCode {
-            margin-top: 15px;
+            margin-top: 8px;
             text-align: center;
         }
+        #qrCode img {
+            width: 80px !important;
+            height: 80px !important;
+        }
         #qrCode p {
-            font-size: 12px;
+            font-size: 10px;
             color: #999;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         
         /* SIMPLE CAROUSEL - ONE VISIBLE CARD AT A TIME */
@@ -133,24 +137,26 @@
             justify-content: center;
             overflow: hidden;
             position: relative;
+            padding: 5px 0;
+            min-height: 0;
         }
         
         .carousel-container {
             width: 100%;
-            max-width: 500px;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            height: 100%;
         }
         
         .screen-card {
             background: white;
             border-radius: 20px;
             padding: 20px;
-            width: 400px;
-            max-width: 90vw;
-            height: min(calc(400px * 19.5 / 9), calc(100vh - 350px));
+            width: auto;
+            height: 90%;
+            aspect-ratio: 9 / 19.5;
             display: none;
             flex-direction: column;
         }
@@ -242,7 +248,7 @@
             display: flex;
             justify-content: center;
             gap: 8px;
-            padding: 20px;
+            padding: 8px;
             flex-shrink: 0;
         }
         .dot {
@@ -358,6 +364,19 @@
             width: 100%;
         }
         .hidden { display: none !important; }
+        
+        /* Mobile fixes */
+        @media (max-width: 768px) {
+            .screen-card {
+                width: auto !important;
+                height: 85vh !important;
+                max-height: 85vh !important;
+                aspect-ratio: 9 / 19.5 !important;
+            }
+            .carousel-wrapper {
+                padding: 10px 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -559,8 +578,8 @@
                 
                 new QRCode(qrCanvas, {
                     text: joinUrl,
-                    width: 150,
-                    height: 150,
+                    width: 80,
+                    height: 80,
                     colorDark: "#667eea",
                     colorLight: "#ffffff",
                 });
