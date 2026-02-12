@@ -99,33 +99,89 @@
         .room-header {
             background: white;
             border-radius: 15px;
-            padding: 10px 15px;
-            margin: 10px 20px;
+            padding: 8px 15px;
+            margin: 8px 20px 5px 20px;
             text-align: center;
             flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .room-info {
+            flex: 1;
+            text-align: center;
         }
         .room-code {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: #667eea;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
         .member-count {
             color: #999;
+            font-size: 10px;
+        }
+        .qr-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
             font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        /* QR Code Overlay */
+        .qr-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .qr-overlay.active {
+            display: flex;
+        }
+        .qr-overlay-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        .qr-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            cursor: pointer;
+            line-height: 1;
         }
         #qrCode {
-            margin-top: 8px;
+            margin-top: 0;
             text-align: center;
         }
         #qrCode img {
-            width: 80px !important;
-            height: 80px !important;
+            width: 200px !important;
+            height: 200px !important;
         }
         #qrCode p {
-            font-size: 10px;
-            color: #999;
-            margin-top: 5px;
+            font-size: 14px;
+            color: #667eea;
+            margin-top: 15px;
+            font-weight: 600;
         }
         
         /* SIMPLE CAROUSEL - ONE VISIBLE CARD AT A TIME */
@@ -148,6 +204,7 @@
             justify-content: center;
             position: relative;
             height: 100%;
+            max-height: calc(100vh - 200px);
         }
         
         .screen-card {
@@ -155,7 +212,8 @@
             border-radius: 20px;
             padding: 20px;
             width: auto;
-            height: 95%;
+            height: 100%;
+            max-height: 100%;
             aspect-ratio: 9 / 19.5;
             display: none;
             flex-direction: column;
@@ -367,17 +425,24 @@
         
         /* Desktop - bigger share window */
         @media (min-width: 769px) {
+            .carousel-container {
+                max-height: calc(100vh - 150px);
+            }
             .screen-card {
-                height: 95% !important;
+                height: 100% !important;
+                max-height: 100% !important;
             }
         }
         
         /* Mobile fixes */
         @media (max-width: 768px) {
+            .carousel-container {
+                max-height: calc(100vh - 280px); /* Leave room for header + buttons */
+            }
             .screen-card {
                 width: auto !important;
-                height: 85vh !important;
-                max-height: 85vh !important;
+                height: 100% !important;
+                max-height: 100% !important;
                 aspect-ratio: 9 / 19.5 !important;
             }
             .carousel-wrapper {
@@ -408,11 +473,22 @@
     <!-- Room Screen -->
     <div id="roomScreen" class="room-screen">
         <div class="room-header">
-            <div class="room-code" id="displayCode"></div>
-            <div class="member-count"><span id="memberCount">0</span> people in room</div>
-            <div id="qrCode" style="display: none;">
-                <div id="qrCanvas"></div>
-                <p>Scan to join!</p>
+            <div class="room-info">
+                <div class="room-code" id="displayCode"></div>
+                <div class="member-count"><span id="memberCount">0</span> people in room</div>
+            </div>
+            <button class="qr-btn" onclick="showQR()">📱 QR</button>
+        </div>
+        
+        <!-- QR Code Overlay -->
+        <div class="qr-overlay" id="qrOverlay" onclick="hideQR()">
+            <div class="qr-overlay-content" onclick="event.stopPropagation()">
+                <button class="qr-close" onclick="hideQR()">×</button>
+                <h3 style="color: #667eea; margin-bottom: 15px; font-size: 20px;">Scan to Join</h3>
+                <div id="qrCode">
+                    <div id="qrCanvas"></div>
+                    <p>Scan with your phone camera</p>
+                </div>
             </div>
         </div>
         
@@ -534,6 +610,14 @@
             const code = generateCode();
             joinRoomWithCode(code);
         }
+        
+        function showQR() {
+            document.getElementById('qrOverlay').classList.add('active');
+        }
+        
+        function hideQR() {
+            document.getElementById('qrOverlay').classList.remove('active');
+        }
 
         function generateCode() {
             const words = ['TABLE', 'SOFA', 'PUB', 'CAFE', 'DECK', 'BAR', 'ROOM'];
@@ -585,8 +669,8 @@
                 
                 new QRCode(qrCanvas, {
                     text: joinUrl,
-                    width: 80,
-                    height: 80,
+                    width: 200,
+                    height: 200,
                     colorDark: "#667eea",
                     colorLight: "#ffffff",
                 });
