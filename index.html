@@ -208,7 +208,7 @@
             font-weight: 600;
         }
         
-        /* SIMPLE CAROUSEL - ONE VISIBLE CARD AT A TIME */
+        /* SLIDING CAROUSEL - INSTAGRAM STYLE */
         .carousel-wrapper {
             flex: 1;
             display: flex;
@@ -223,28 +223,32 @@
         
         .carousel-container {
             width: 100%;
+            height: 100%;
+            max-height: calc(100vh - 200px);
+            position: relative;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+        }
+        
+        .cards-track {
+            display: flex;
             height: 100%;
-            max-height: calc(100vh - 200px);
+            transition: transform 0.3s ease-out;
+            will-change: transform;
         }
         
         .screen-card {
             background: white;
             border-radius: 20px;
             padding: 20px;
-            width: auto;
             height: 100%;
-            max-height: 100%;
             aspect-ratio: 9 / 19.5;
-            display: none;
-            flex-direction: column;
-        }
-        
-        .screen-card.active {
+            flex-shrink: 0;
             display: flex;
+            flex-direction: column;
+            margin: 0 10px;
         }
         
         .screen-header {
@@ -520,9 +524,9 @@
         </div>
         
         <div class="carousel-wrapper">
-            <div class="carousel-container">
+            <div class="carousel-container" id="carouselContainer">
                 <button class="nav-arrow nav-left" id="navLeft" onclick="prevSlide()">‹</button>
-                <div id="cardsContainer">
+                <div class="cards-track" id="cardsTrack">
                     <!-- Cards appear here -->
                 </div>
                 <button class="nav-arrow nav-right" id="navRight" onclick="nextSlide()">›</button>
@@ -658,6 +662,16 @@
         // Make functions globally accessible
         window.showQR = showQR;
         window.hideQR = hideQR;
+        window.goToSlide = goToSlide;
+        window.nextSlide = nextSlide;
+        window.prevSlide = prevSlide;
+        
+        // Recalculate on window resize
+        window.addEventListener('resize', () => {
+            if (memberList.length > 0) {
+                updateCarouselPosition();
+            }
+        });
 
         function generateCode() {
             const words = ['TABLE', 'SOFA', 'PUB', 'CAFE', 'DECK', 'BAR', 'ROOM'];
@@ -724,7 +738,7 @@
         }
 
         function updateScreens() {
-            const container = document.getElementById('cardsContainer');
+            const track = document.getElementById('cardsTrack');
             const dotsContainer = document.getElementById('carouselDots');
             
             const membersRef = ref(db, `rooms/${currentRoom}/members`);
@@ -746,10 +760,9 @@
                         const isMe = userId === currentUser;
                         const share = shares[userId];
                         const shortName = isMe ? 'YOU' : userId.substr(5, 6).toUpperCase();
-                        const isActive = index === currentSlide ? 'active' : '';
                         
                         html += `
-                            <div class="screen-card ${isActive}">
+                            <div class="screen-card" data-index="${index}">
                                 <div class="screen-header">
                                     <div class="user-name">${shortName}</div>
                                     ${share ? '<div class="live-badge">🔴 LIVE</div>' : ''}
@@ -769,19 +782,36 @@
                         }
                     });
                     
-                    container.innerHTML = html;
+                    track.innerHTML = html;
                     dotsContainer.innerHTML = dotsHtml;
                     
+                    updateCarouselPosition();
                     updateArrows();
+                    setupSwipe();
                 }, { onlyOnce: true });
             }, { onlyOnce: true });
         }
 
+        function updateCarouselPosition() {
+            const track = document.getElementById('cardsTrack');
+            const container = document.getElementById('carouselContainer');
+            const cards = track.querySelectorAll('.screen-card');
+            
+            if (cards.length === 0) return;
+            
+            const containerWidth = container.offsetWidth;
+            const cardWidth = cards[0].offsetWidth;
+            const spacing = 20; // margin between cards
+            
+            // Center the current card
+            const offset = (containerWidth / 2) - (cardWidth / 2) - (currentSlide * (cardWidth + spacing));
+            track.style.transform = `translateX(${offset}px)`;
+        }
+
         function goToSlide(index) {
             currentSlide = index;
-            document.querySelectorAll('.screen-card').forEach((card, i) => {
-                card.classList.toggle('active', i === index);
-            });
+            updateCarouselPosition();
+            
             document.querySelectorAll('.dot').forEach((dot, i) => {
                 dot.classList.toggle('active', i === index);
             });
@@ -813,44 +843,77 @@
             }
         }
 
-        // Touch swipe
+        // Touch swipe with smooth following
         let touchStartX = 0;
         let touchEndX = 0;
         let touchStartY = 0;
+        let isDragging = false;
         
-        const container = document.getElementById('cardsContainer');
-        
-        container.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        }, { passive: true });
-        
-        container.addEventListener('touchmove', e => {
-            // Prevent vertical scrolling
-            const touchY = e.changedTouches[0].screenY;
-            const deltaY = Math.abs(touchY - touchStartY);
-            const deltaX = Math.abs(e.changedTouches[0].screenX - touchStartX);
+        function setupSwipe() {
+            const container = document.getElementById('carouselContainer');
+            const track = document.getElementById('cardsTrack');
             
-            // If horizontal movement is greater, prevent vertical scroll
-            if (deltaX > deltaY) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        
-        container.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, { passive: true });
-        
-        function handleSwipe() {
-            if (touchEndX < touchStartX - 50) {
-                nextSlide();
-            }
-            if (touchEndX > touchStartX + 50) {
-                prevSlide();
-            }
+            // Remove old listeners
+            container.replaceWith(container.cloneNode(true));
+            const newContainer = document.getElementById('carouselContainer');
+            const newTrack = document.getElementById('cardsTrack');
+            
+            newContainer.addEventListener('touchstart', e => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                isDragging = true;
+                newTrack.style.transition = 'none';
+            }, { passive: true });
+            
+            newContainer.addEventListener('touchmove', e => {
+                if (!isDragging) return;
+                
+                const touchX = e.touches[0].clientX;
+                const touchY = e.touches[0].clientY;
+                const deltaX = touchX - touchStartX;
+                const deltaY = Math.abs(touchY - touchStartY);
+                
+                // Only swipe horizontally if horizontal movement is greater
+                if (Math.abs(deltaX) > deltaY) {
+                    e.preventDefault();
+                    
+                    // Calculate current offset
+                    const cards = newTrack.querySelectorAll('.screen-card');
+                    if (cards.length === 0) return;
+                    
+                    const containerWidth = newContainer.offsetWidth;
+                    const cardWidth = cards[0].offsetWidth;
+                    const spacing = 20;
+                    const baseOffset = (containerWidth / 2) - (cardWidth / 2) - (currentSlide * (cardWidth + spacing));
+                    
+                    newTrack.style.transform = `translateX(${baseOffset + deltaX}px)`;
+                }
+            }, { passive: false });
+            
+            newContainer.addEventListener('touchend', e => {
+                if (!isDragging) return;
+                isDragging = false;
+                
+                touchEndX = e.changedTouches[0].clientX;
+                const swipeDistance = touchStartX - touchEndX;
+                
+                newTrack.style.transition = 'transform 0.3s ease-out';
+                
+                // Swipe threshold
+                if (Math.abs(swipeDistance) > 50) {
+                    if (swipeDistance > 0 && currentSlide < memberList.length - 1) {
+                        goToSlide(currentSlide + 1);
+                    } else if (swipeDistance < 0 && currentSlide > 0) {
+                        goToSlide(currentSlide - 1);
+                    } else {
+                        updateCarouselPosition(); // Snap back
+                    }
+                } else {
+                    updateCarouselPosition(); // Snap back
+                }
+            }, { passive: true });
         }
-
+        
         function renderShare(share) {
             if (share.type === 'photo') {
                 return `<img src="${share.data}" alt="Shared photo">`;
