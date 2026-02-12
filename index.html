@@ -224,7 +224,7 @@
         .carousel-container {
             width: 100%;
             height: 100%;
-            max-height: calc(100vh - 200px);
+            max-height: calc(100vh - 80px); /* Tiny header (50px) + tiny buttons (30px) */
             position: relative;
             overflow: hidden;
             display: flex;
@@ -454,7 +454,7 @@
         /* Desktop - bigger share window */
         @media (min-width: 769px) {
             .carousel-container {
-                max-height: calc(100vh - 120px); /* Compact header + buttons */
+                max-height: calc(100vh - 80px); /* Compact header + buttons */
             }
             .screen-card {
                 height: 95% !important;
@@ -465,7 +465,7 @@
         /* Mobile fixes */
         @media (max-width: 768px) {
             .carousel-container {
-                max-height: calc(100vh - 140px); /* Compact header (60px) + buttons (80px) */
+                max-height: calc(100vh - 80px); /* Same compact sizing */
             }
             .screen-card {
                 width: auto !important;
@@ -800,12 +800,16 @@
             if (cards.length === 0) return;
             
             const containerWidth = container.offsetWidth;
-            const cardWidth = cards[0].offsetWidth;
+            const card = cards[currentSlide];
+            const cardWidth = card.offsetWidth;
             const spacing = 20; // margin between cards
             
-            // Center the current card
-            const offset = (containerWidth / 2) - (cardWidth / 2) - (currentSlide * (cardWidth + spacing));
-            track.style.transform = `translateX(${offset}px)`;
+            // Calculate offset to center the current card
+            const cardOffsetLeft = currentSlide * (cardWidth + spacing);
+            const centerOffset = (containerWidth - cardWidth) / 2;
+            const translateX = centerOffset - cardOffsetLeft;
+            
+            track.style.transform = `translateX(${translateX}px)`;
         }
 
         function goToSlide(index) {
