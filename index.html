@@ -785,13 +785,17 @@
             const cardWidth = cards[0].offsetWidth;
             const gap = 20;
             
-            // Position of the current card's LEFT edge from track start
-            const cardLeftPosition = currentSlide * (cardWidth + gap);
+            // Distance from track start to the current card's left edge
+            // We only count gaps BEFORE this card (not after)
+            // Card 0: 0 gaps before it
+            // Card 1: 1 card + 1 gap before it = cardWidth + gap
+            // Card 2: 2 cards + 2 gaps before it = 2*cardWidth + 2*gap
+            const gapsBefore = currentSlide;
+            const cardsBefore = currentSlide;
+            const distanceToCurrentCard = (cardsBefore * cardWidth) + (gapsBefore * gap);
             
-            // To center the card: container center - card center - card's left position
-            const containerCenter = containerWidth / 2;
-            const cardCenter = cardWidth / 2;
-            const translateX = containerCenter - cardCenter - cardLeftPosition;
+            // Center the current card
+            const translateX = (containerWidth - cardWidth) / 2 - distanceToCurrentCard;
             
             track.style.transform = `translateX(${translateX}px)`;
         }
