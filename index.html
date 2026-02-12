@@ -450,18 +450,18 @@
         /* Desktop - bigger share window */
         @media (min-width: 769px) {
             .carousel-container {
-                max-height: calc(100vh - 150px);
+                max-height: calc(100vh - 120px); /* Compact header + buttons */
             }
             .screen-card {
-                height: 100% !important;
-                max-height: 100% !important;
+                height: 95% !important;
+                max-height: 95% !important;
             }
         }
         
         /* Mobile fixes */
         @media (max-width: 768px) {
             .carousel-container {
-                max-height: calc(100vh - 280px); /* Leave room for header + buttons */
+                max-height: calc(100vh - 140px); /* Compact header (60px) + buttons (80px) */
             }
             .screen-card {
                 width: auto !important;
@@ -470,7 +470,7 @@
                 aspect-ratio: 9 / 19.5 !important;
             }
             .carousel-wrapper {
-                padding: 10px 0;
+                padding: 5px 0;
             }
         }
     </style>
@@ -699,9 +699,11 @@
             document.getElementById('roomScreen').classList.add('active');
             document.getElementById('displayCode').textContent = currentRoom;
             
-            if (!isRejoin) {
-                const qrDiv = document.getElementById('qrCode');
-                const qrCanvas = document.getElementById('qrCanvas');
+            // Always generate QR code (even on rejoin)
+            const qrDiv = document.getElementById('qrCode');
+            const qrCanvas = document.getElementById('qrCanvas');
+            
+            if (qrCanvas && !qrCanvas.querySelector('img')) {
                 qrDiv.style.display = 'block';
                 qrCanvas.innerHTML = '';
                 
