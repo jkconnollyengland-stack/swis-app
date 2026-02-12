@@ -226,6 +226,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 0 10px;
         }
         
         .cards-track {
@@ -234,6 +235,7 @@
             transition: transform 0.3s ease-out;
             will-change: transform;
             gap: 20px;
+            transform: translateX(0);
         }
         
         .screen-card {
@@ -975,11 +977,7 @@
         async function leaveRoom() {
             if (!confirm('Leave this room?')) return;
             
-            const userRef = ref(db, `rooms/${currentRoom}/members/${currentUser}`);
-            const shareRef = ref(db, `rooms/${currentRoom}/shares/${currentUser}`);
-            
-            await remove(userRef);
-            await remove(shareRef);
+            await cleanupUser();
             
             currentRoom = null;
             sessionStorage.removeItem('swis_room');
@@ -989,6 +987,28 @@
             document.getElementById('joinCode').value = '';
             document.getElementById('stopBtn').classList.remove('active');
         }
+        
+        async function cleanupUser() {
+            if (!currentRoom || !currentUser) return;
+            
+            const userRef = ref(db, `rooms/${currentRoom}/members/${currentUser}`);
+            const shareRef = ref(db, `rooms/${currentRoom}/shares/${currentUser}`);
+            
+            await remove(userRef);
+            await remove(shareRef);
+        }
+        
+        // Cleanup when page closes or refreshes
+        window.addEventListener('beforeunload', () => {
+            cleanupUser();
+        });
+        
+        // Cleanup when tab becomes hidden
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && currentRoom) {
+                cleanupUser();
+            }
+        });
     </script>
 </body>
 </html>
