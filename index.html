@@ -654,6 +654,10 @@
             console.log('hideQR called');
             document.getElementById('qrOverlay').classList.remove('active');
         }
+        
+        // Make functions globally accessible
+        window.showQR = showQR;
+        window.hideQR = hideQR;
 
         function generateCode() {
             const words = ['TABLE', 'SOFA', 'PUB', 'CAFE', 'DECK', 'BAR', 'ROOM'];
