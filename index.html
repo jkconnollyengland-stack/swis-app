@@ -88,11 +88,9 @@
         /* Room Screen */
         .room-screen {
             display: none;
-            min-height: 100vh;
-            max-height: 100vh;
+            height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             flex-direction: column;
-            overflow: hidden;
         }
         .room-screen.active { display: flex; }
         
@@ -215,16 +213,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
             position: relative;
-            padding: 5px 0;
             min-height: 0;
+            overflow: hidden;
         }
         
         .carousel-container {
             width: 100%;
             height: 100%;
-            max-height: calc(100vh - 80px); /* Tiny header (50px) + tiny buttons (30px) */
             position: relative;
             overflow: hidden;
             display: flex;
@@ -354,18 +350,19 @@
         /* Control Bar */
         .control-bar {
             background: white;
-            padding: 10px 0;
+            padding: 8px 0;
             box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
             display: flex;
             align-items: center;
             justify-content: space-evenly;
             flex-shrink: 0;
+            height: 70px;
         }
         .control-btn {
             width: 20%;
-            padding: 12px;
+            padding: 10px;
             border-radius: 10px;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
             cursor: pointer;
             border: none;
@@ -452,29 +449,9 @@
         .hidden { display: none !important; }
         
         /* Desktop - bigger share window */
-        @media (min-width: 769px) {
-            .carousel-container {
-                max-height: calc(100vh - 80px); /* Compact header + buttons */
-            }
-            .screen-card {
-                height: 95% !important;
-                max-height: 95% !important;
-            }
-        }
-        
-        /* Mobile fixes */
         @media (max-width: 768px) {
-            .carousel-container {
-                max-height: calc(100vh - 80px); /* Same compact sizing */
-            }
             .screen-card {
-                width: auto !important;
-                height: 100% !important;
-                max-height: 100% !important;
                 aspect-ratio: 9 / 19.5 !important;
-            }
-            .carousel-wrapper {
-                padding: 5px 0;
             }
         }
     </style>
