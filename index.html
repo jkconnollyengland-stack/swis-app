@@ -245,7 +245,7 @@
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
-            margin-right: 20px;
+            margin-right: 10px;
         }
         
         .screen-card:last-child {
@@ -783,7 +783,7 @@
             
             const containerWidth = container.offsetWidth;
             const cardWidth = cards[0].offsetWidth;
-            const gap = 20;
+            const gap = 10; // Reduced from 20px
             
             // Distance from track start to the current card's left edge
             // We only count gaps BEFORE this card (not after)
@@ -875,7 +875,7 @@
                     
                     const containerWidth = newContainer.offsetWidth;
                     const cardWidth = cards[0].offsetWidth;
-                    const spacing = 20;
+                    const spacing = 10;
                     const baseOffset = (containerWidth / 2) - (cardWidth / 2) - (currentSlide * (cardWidth + spacing));
                     
                     newTrack.style.transform = `translateX(${baseOffset + deltaX}px)`;
