@@ -225,7 +225,7 @@
             overflow: hidden;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
         }
         
         .cards-track {
@@ -234,6 +234,7 @@
             transition: transform 0.3s ease-out;
             will-change: transform;
             transform: translateX(0);
+            padding-left: 50%;
         }
         
         .screen-card {
@@ -781,23 +782,14 @@
             
             if (cards.length === 0) return;
             
-            const containerWidth = container.offsetWidth;
             const cardWidth = cards[0].offsetWidth;
-            const gap = 10; // Reduced from 20px
+            const gap = 10;
             
-            // Distance from track start to the current card's left edge
-            // We only count gaps BEFORE this card (not after)
-            // Card 0: 0 gaps before it
-            // Card 1: 1 card + 1 gap before it = cardWidth + gap
-            // Card 2: 2 cards + 2 gaps before it = 2*cardWidth + 2*gap
-            const gapsBefore = currentSlide;
-            const cardsBefore = currentSlide;
-            const distanceToCurrentCard = (cardsBefore * cardWidth) + (gapsBefore * gap);
+            // With padding-left: 50%, the first card's left edge starts at container center
+            // To center card N, shift left by: N cards + N gaps + half a card
+            const shiftLeft = (currentSlide * cardWidth) + (currentSlide * gap) + (cardWidth / 2);
             
-            // Center the current card
-            const translateX = (containerWidth - cardWidth) / 2 - distanceToCurrentCard;
-            
-            track.style.transform = `translateX(${translateX}px)`;
+            track.style.transform = `translateX(-${shiftLeft}px)`;
         }
 
         function goToSlide(index) {
