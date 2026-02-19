@@ -6,690 +6,418 @@
     <title>SWIS - See What I See</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: #000;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 40%, #fed7aa 100%);
             min-height: 100vh;
-            overflow: hidden;
             position: fixed;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .welcome-screen {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .welcome-card {
-            background: white;
-            border-radius: 30px;
-            padding: 40px 30px;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        h1 {
-            font-size: 48px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        .tagline {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 15px;
-            line-height: 1.4;
-        }
-        input {
-            width: 100%;
-            padding: 18px;
-            border-radius: 15px;
-            border: 2px solid #e0e0e0;
-            font-size: 18px;
-            margin-bottom: 15px;
-            text-align: center;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-        button {
-            width: 100%;
-            padding: 18px;
-            border-radius: 15px;
-            border: none;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        button:active { transform: scale(0.98); }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            margin-bottom: 15px;
-        }
-        .btn-secondary {
-            background: #f5f5f5;
-            color: #333;
-        }
-        .divider {
-            text-align: center;
-            color: #999;
-            margin: 20px 0;
-            font-size: 14px;
-        }
-        .status {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 13px;
-            color: #4CAF50;
-        }
-        
-        /* Room Screen */
-        .room-screen {
-            display: none;
-            height: 100vh;
-            height: 100dvh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            flex-direction: column;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            width: 100%; height: 100%;
             overflow: hidden;
         }
-        .room-screen.active { display: flex; }
-        
-        /* ── FIXED HEADER ── */
-        .room-header {
-            background: white;
-            border-radius: 14px;
-            margin: 8px 12px;
-            padding: 8px 10px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-            min-height: 56px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-            gap: 8px;
-            position: relative;
-            z-index: 1;
-        }
 
-        .header-left {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .header-logo {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid #f97316;
-            background: linear-gradient(135deg, #60a5fa, #3b82f6, #2563eb);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .header-logo svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* ── SPLASH SCREEN ── */
+        /* ── SPLASH ── */
         .splash-screen {
-            position: fixed;
-            inset: 0;
+            position: fixed; inset: 0;
             background: linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #fff7ed 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-            gap: 24px;
-            padding: 32px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.5s ease;
+            gap: 24px; padding: 32px;
         }
-        .splash-screen.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Outer relative wrapper — w-32 h-32 = 128px */
-        .splash-logo {
-            position: relative;
-            width: 128px;
-            height: 128px;
-        }
-
-        /* Orange gradient circle — w-32 h-32, shadow-2xl */
+        .splash-screen.fade-out { opacity: 0; pointer-events: none; }
+        .splash-logo { position: relative; width: 128px; height: 128px; }
         .logo-orange {
-            width: 128px;
-            height: 128px;
+            width: 128px; height: 128px;
             background: linear-gradient(135deg, #fb923c, #f97316, #ef4444);
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
         }
-
-        /* Blue gradient circle — w-28 h-28 = 112px */
         .logo-blue {
-            width: 112px;
-            height: 112px;
+            width: 112px; height: 112px;
             background: linear-gradient(135deg, #60a5fa, #3b82f6, #2563eb);
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
         }
-
-        /* Eye icon — h-16 w-16 = 64px, strokeWidth 1.5 */
-        .logo-eye {
-            width: 64px;
-            height: 64px;
-            color: white;
-        }
-
-        /* animate-ping: absolute inset-0, w-32 h-32, border-4 border-orange-300, opacity-75 */
+        .logo-eye { width: 64px; height: 64px; color: white; }
         .ring-ping {
-            position: absolute;
-            top: 0; left: 0;
-            width: 128px;
-            height: 128px;
-            border-radius: 50%;
-            border: 4px solid #fdba74;
-            opacity: 0.75;
-            animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+            position: absolute; top: 0; left: 0;
+            width: 128px; height: 128px; border-radius: 50%;
+            border: 4px solid #fdba74; opacity: 0.75;
+            animation: ping 1.5s cubic-bezier(0,0,0.2,1) infinite;
         }
-        @keyframes ping {
-            0%        { transform: scale(1);   opacity: 0.75; }
-            75%, 100% { transform: scale(1.5); opacity: 0; }
-        }
-
-        /* animate-pulse: absolute inset-2 = 8px, w-28 h-28 = 112px, border-2 border-blue-300 */
+        @keyframes ping { 0%{transform:scale(1);opacity:0.75} 75%,100%{transform:scale(1.5);opacity:0} }
         .ring-pulse {
-            position: absolute;
-            top: 8px; left: 8px;
-            width: 112px;
-            height: 112px;
-            border-radius: 50%;
+            position: absolute; top: 8px; left: 8px;
+            width: 112px; height: 112px; border-radius: 50%;
             border: 2px solid #93c5fd;
-            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            animation: pulse-ring 2s cubic-bezier(0.4,0,0.6,1) infinite;
         }
-        @keyframes pulse-ring {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0.3; }
-        }
-
-        /* App name — text-4xl font-bold, orange-500 to blue-600 gradient */
-        .splash-text {
-            text-align: center;
-        }
+        @keyframes pulse-ring { 0%,100%{opacity:1} 50%{opacity:0.3} }
         .splash-title {
-            font-size: 36px;
-            font-weight: 700;
+            font-size: 36px; font-weight: 700; line-height: 1;
             background: linear-gradient(to right, #f97316, #2563eb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-            line-height: 1;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .splash-sub {
-            font-size: 18px;
-            color: #475569;
-            font-weight: 500;
-            letter-spacing: 0.05em;
-            margin-bottom: 4px;
-        }
-        .splash-sub2 {
-            font-size: 14px;
-            color: #64748b;
-            margin-top: 4px;
-        }
+        .splash-sub  { font-size: 18px; color: #475569; font-weight: 500; }
+        .splash-sub2 { font-size: 14px; color: #64748b; }
+        .splash-dots { display: flex; align-items: center; gap: 8px; }
+        .sdot { border-radius: 50%; animation: sdot-pulse 2s cubic-bezier(0.4,0,0.6,1) infinite; }
+        .sdot-lg { width:8px; height:8px; background:#fb923c; }
+        .sdot-sm { width:4px; height:4px; background:#60a5fa; }
+        .sdot:nth-child(1){animation-delay:0s} .sdot:nth-child(2){animation-delay:.1s}
+        .sdot:nth-child(3){animation-delay:.2s} .sdot:nth-child(4){animation-delay:.3s}
+        .sdot:nth-child(5){animation-delay:.4s}
+        @keyframes sdot-pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-        /* Connection dots — alternating orange/blue, animate-pulse with delays */
-        .splash-dots {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* ── WELCOME ── */
+        .welcome-screen {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 40%, #fed7aa 100%);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px; overflow-y: auto;
         }
-        .sdot {
-            border-radius: 50%;
-            animation: sdot-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        .welcome-card {
+            background: rgba(255,255,255,0.93);
+            backdrop-filter: blur(10px);
+            border-radius: 28px; padding: 36px 28px;
+            max-width: 400px; width: 100%;
+            box-shadow: 0 20px 60px rgba(59,130,246,0.18);
         }
-        .sdot-lg  { width: 8px;  height: 8px;  background: #fb923c; }
-        .sdot-sm  { width: 4px;  height: 4px;  background: #60a5fa; }
-        .sdot:nth-child(1) { animation-delay: 0s; }
-        .sdot:nth-child(2) { animation-delay: 0.1s; }
-        .sdot:nth-child(3) { animation-delay: 0.2s; }
-        .sdot:nth-child(4) { animation-delay: 0.3s; }
-        .sdot:nth-child(5) { animation-delay: 0.4s; }
-        @keyframes sdot-pulse {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0.3; }
+        .welcome-logo {
+            display: flex; align-items: center; justify-content: center;
+            gap: 14px; margin-bottom: 24px;
         }
+        .welcome-logo-icon {
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, #f97316, #3b82f6);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 20px rgba(249,115,22,0.3); flex-shrink: 0;
+        }
+        .welcome-logo-icon svg { width: 28px; height: 28px; }
+        .welcome-logo-text h1 { font-size: 28px; font-weight: 800; color: #1e293b; line-height: 1; }
+        .welcome-logo-text p  { font-size: 13px; color: #64748b; margin-top: 2px; font-weight: 500; }
+        .tagline { text-align: center; color: #64748b; margin-bottom: 24px; font-size: 14px; line-height: 1.5; }
 
-        .room-info {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-width: 0;
-            flex: 1;
-            overflow: hidden;
+        input[type="text"] {
+            width: 100%; padding: 16px; border-radius: 14px;
+            border: 2px solid #bfdbfe; font-size: 18px;
+            margin-bottom: 12px; text-align: center;
+            text-transform: uppercase; font-weight: 700;
+            color: #1e293b; background: white; outline: none;
+            transition: border-color 0.2s;
         }
-        .room-code {
-            font-size: 20px;
-            font-weight: 700;
-            color: #667eea;
-            line-height: 1.2;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .member-count {
-            color: #999;
-            font-size: 9px;
-            line-height: 1.1;
-            white-space: nowrap;
-        }
+        input[type="text"]:focus { border-color: #3b82f6; }
 
-        /* QR button — sits inside the white card, never outside */
+        button { cursor: pointer; border: none; transition: transform 0.15s; }
+        button:active { transform: scale(0.97); }
+
+        .btn-primary {
+            width: 100%; padding: 16px; border-radius: 14px;
+            font-size: 17px; font-weight: 700; color: white;
+            background: linear-gradient(135deg, #f97316, #3b82f6);
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(59,130,246,0.25);
+        }
+        .btn-secondary {
+            width: 100%; padding: 16px; border-radius: 14px;
+            font-size: 16px; font-weight: 600;
+            color: #475569; background: #f1f5f9;
+        }
+        .divider { text-align: center; color: #94a3b8; margin: 14px 0; font-size: 13px; }
+        .status  { text-align: center; margin-top: 14px; font-size: 13px; color: #22c55e; }
+
+        /* ── ROOM SCREEN ── */
+        .room-screen {
+            display: none; position: fixed; inset: 0;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 40%, #fed7aa 100%);
+            flex-direction: column; overflow: hidden;
+        }
+        .room-screen.active { display: flex; }
+
+        /* Header */
+        .room-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px; margin: 8px 12px;
+            padding: 8px 12px;
+            display: flex; flex-direction: row;
+            align-items: center; justify-content: space-between;
+            flex-shrink: 0; min-height: 56px;
+            box-shadow: 0 2px 16px rgba(59,130,246,0.12);
+            gap: 10px; position: relative; z-index: 1;
+        }
+        .header-left {
+            display: flex; flex-direction: row;
+            align-items: center; gap: 10px;
+            flex: 1; min-width: 0;
+        }
+        .header-logo {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #f97316, #3b82f6);
+            border-radius: 10px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 3px 8px rgba(249,115,22,0.28);
+        }
+        .header-logo svg { width: 20px; height: 20px; }
+        .room-info { display: flex; flex-direction: column; justify-content: center; min-width: 0; flex: 1; }
+        .room-code { font-size: 18px; font-weight: 800; color: #1e293b; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .member-count { color: #94a3b8; font-size: 10px; line-height: 1.2; white-space: nowrap; }
         .qr-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 8px 14px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-            flex-shrink: 0;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            background: linear-gradient(135deg, #f97316, #3b82f6);
+            color: white; border-radius: 10px;
+            padding: 8px 14px; font-size: 12px; font-weight: 700;
+            white-space: nowrap; flex-shrink: 0; height: 36px;
+            display: flex; align-items: center; gap: 4px;
         }
-        
-        /* QR Code Overlay */
+
+        /* QR Overlay */
         .qr-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7); z-index: 1000;
+            align-items: center; justify-content: center;
         }
-        .qr-overlay.active {
-            display: flex;
-        }
+        .qr-overlay.active { display: flex; }
         .qr-overlay-content {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            position: relative;
+            background: white; border-radius: 24px;
+            padding: 30px; text-align: center; position: relative;
         }
         .qr-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #f0f0f0;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 20px;
-            cursor: pointer;
-            line-height: 1;
+            position: absolute; top: 10px; right: 10px;
+            background: #f1f5f9; border: none; border-radius: 50%;
+            width: 30px; height: 30px; font-size: 18px; cursor: pointer;
         }
-        #qrCode {
-            margin-top: 0;
-            text-align: center;
+        #qrCode img { width:200px !important; height:200px !important; }
+        #qrCode p { font-size:14px; color:#f97316; margin-top:12px; font-weight:600; }
+
+        /* Tab content */
+        .tab-content {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            padding: 0 12px 8px;
+            -webkit-overflow-scrolling: touch;
         }
-        #qrCode img {
-            width: 200px !important;
-            height: 200px !important;
-        }
-        #qrCode p {
-            font-size: 14px;
-            color: #667eea;
-            margin-top: 15px;
-            font-weight: 600;
-        }
-        
-        /* SLIDING CAROUSEL */
-        .carousel-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            min-height: 0;
-            overflow: hidden;
-        }
-        
+
+        /* HOME — Carousel */
+        .carousel-wrapper { height: 100%; display: flex; flex-direction: column; }
         .carousel-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
+            flex: 1; position: relative; overflow: hidden;
+            display: flex; align-items: center;
         }
-        
         .cards-track {
-            display: flex;
-            height: 100%;
+            display: flex; height: 100%;
             transition: transform 0.3s ease-out;
-            will-change: transform;
-            transform: translateX(0);
-            padding-left: 50%;
+            will-change: transform; padding-left: 50%;
         }
-        
         .screen-card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            height: 100%;
-            aspect-ratio: 9 / 19.5;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            margin-right: 10px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px; padding: 20px;
+            height: 100%; aspect-ratio: 9/19.5;
+            flex-shrink: 0; display: flex; flex-direction: column;
+            margin-right: 12px;
+            box-shadow: 0 8px 32px rgba(59,130,246,0.13);
+            border: 2px solid rgba(191,219,254,0.5);
         }
-        
-        .screen-card:last-child {
-            margin-right: 0;
-        }
-        
         .screen-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
-            flex-shrink: 0;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9; flex-shrink: 0;
         }
-        .user-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-        }
+        .user-name { font-size: 18px; font-weight: 700; color: #1e293b; }
         .live-badge {
-            background: #ff3b30;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            animation: pulse 1.5s infinite;
+            background: #ef4444; color: white;
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 700;
+            animation: pulse-badge 1.5s infinite;
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
+        @keyframes pulse-badge { 0%,100%{opacity:1} 50%{opacity:0.7} }
         .screen-content {
-            text-align: center;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            flex: 1; display: flex; align-items: center;
+            justify-content: center; overflow: hidden; text-align: center;
         }
-        .screen-content img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            border-radius: 10px;
-        }
-        .screen-content a {
-            color: #667eea;
-            word-break: break-all;
-            font-size: 16px;
-            text-decoration: none;
-        }
-        .screen-content p {
-            padding: 20px;
-            font-size: 16px;
-        }
-        .empty-state {
-            color: #999;
-            font-style: italic;
-        }
-        
-        /* NAVIGATION ARROWS */
+        .screen-content img { max-width:100%; max-height:100%; object-fit:contain; border-radius:10px; }
+        .screen-content a { color:#3b82f6; word-break:break-all; font-size:16px; text-decoration:none; }
+        .screen-content p { padding:20px; font-size:16px; color:#334155; }
+        .empty-state { color:#94a3b8; font-style:italic; }
+
         .nav-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.3);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            color: white;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.8); border: none;
+            width: 44px; height: 44px; border-radius: 50%;
+            font-size: 22px; cursor: pointer; color: #475569;
+            display: none; align-items: center; justify-content: center;
+            z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .nav-arrow.visible { display: flex; }
-        .nav-left { left: 10px; }
-        .nav-right { right: 10px; }
-        
-        /* DOTS */
-        .carousel-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            padding: 8px;
-            flex-shrink: 0;
-        }
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.4);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        .dot.active {
-            background: white;
-            width: 24px;
-            border-radius: 4px;
-        }
-        
-        /* Control Bar */
+        .nav-left { left: 8px; } .nav-right { right: 8px; }
+
+        .carousel-dots { display:flex; justify-content:center; gap:8px; padding:6px; flex-shrink:0; }
+        .dot { width:8px; height:8px; border-radius:50%; background:rgba(148,163,184,0.5); transition:all 0.3s; cursor:pointer; }
+        .dot.active { background:#f97316; width:24px; border-radius:4px; }
+
         .control-bar {
-            background: white;
-            padding: 8px 0;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            flex-shrink: 0;
-            height: 70px;
+            display: flex; align-items: center; justify-content: center;
+            gap: 12px; padding: 8px 0 4px; flex-shrink: 0;
         }
-        .control-btn {
-            width: 20%;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 20px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
+        .control-btn { padding: 10px 22px; border-radius: 12px; font-size: 15px; font-weight: 700; }
+        .share-btn { background: linear-gradient(135deg,#f97316,#3b82f6); color:white; box-shadow: 0 4px 12px rgba(249,115,22,0.25); }
+        .stop-btn  { background: #fee2e2; color:#ef4444; display:none; }
+        .stop-btn.active { display:block; }
+        .leave-btn { background: #f1f5f9; color:#64748b; }
+
+        /* FRIENDS TAB */
+        .section-header { display:flex; justify-content:space-between; align-items:center; padding:16px 0 12px; }
+        .section-title  { font-size:22px; font-weight:800; color:#1e293b; }
+        .btn-add {
+            background: linear-gradient(135deg,#f97316,#3b82f6);
+            color:white; border-radius:10px; padding:8px 16px;
+            font-size:13px; font-weight:700;
+            display:flex; align-items:center; gap:6px;
         }
-        .share-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .friend-card {
+            background: rgba(255,255,255,0.92);
+            border-radius:16px; padding:16px; margin-bottom:12px;
+            box-shadow: 0 4px 16px rgba(59,130,246,0.1);
+            border: 2px solid rgba(191,219,254,0.4);
+            display:flex; align-items:center; gap:14px;
         }
-        .stop-btn {
-            background: #ff3b30;
-            color: white;
-            display: none;
+        .avatar {
+            width:52px; height:52px; border-radius:50%;
+            background: linear-gradient(135deg,#f97316,#3b82f6);
+            display:flex; align-items:center; justify-content:center;
+            color:white; font-size:18px; font-weight:700; flex-shrink:0;
         }
-        .stop-btn.active {
-            display: block;
+        .friend-info { flex:1; }
+        .friend-name   { font-size:17px; font-weight:700; color:#1e293b; }
+        .friend-status { font-size:13px; color:#64748b; margin-top:2px; }
+        .sharing-dot { width:12px; height:12px; border-radius:50%; background:#22c55e; animation:sdot-pulse 1.5s infinite; }
+        .offline-dot { width:12px; height:12px; border-radius:50%; background:#cbd5e1; }
+
+        /* GROUPS TAB */
+        .group-card {
+            background: rgba(255,255,255,0.92);
+            border-radius:16px; padding:16px; margin-bottom:12px;
+            box-shadow: 0 4px 16px rgba(59,130,246,0.1);
+            border: 2px solid rgba(191,219,254,0.4);
+            display:flex; align-items:center; justify-content:space-between;
         }
-        .leave-btn {
-            background: #f5f5f5;
-            color: #333;
+        .group-name    { font-size:17px; font-weight:700; color:#1e293b; }
+        .group-members { font-size:13px; color:#64748b; margin-top:2px; }
+        .active-badge  { background:#dbeafe; color:#2563eb; border-radius:20px; padding:4px 12px; font-size:13px; font-weight:600; }
+
+        /* BOTTOM NAV */
+        .bottom-nav {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid rgba(191,219,254,0.4);
+            display:flex; align-items:center; justify-content:space-around;
+            padding: 8px 4px 14px; flex-shrink:0;
+            box-shadow: 0 -4px 20px rgba(59,130,246,0.08);
         }
-        
-        /* Modal */
+        .nav-btn {
+            display:flex; flex-direction:column;
+            align-items:center; gap:4px;
+            padding: 8px 20px; border-radius:14px;
+            background:none; border:none;
+            color:#94a3b8; font-size:12px; font-weight:600;
+            transition:all 0.2s; min-width:70px;
+        }
+        .nav-btn svg { width:24px; height:24px; }
+        .nav-btn.active { color:#f97316; background:rgba(249,115,22,0.1); }
+        .nav-btn:active { transform:scale(0.94); }
+
+        /* SHARE MODAL — slides up from bottom */
         .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            display:none; position:fixed; inset:0;
+            background:rgba(15,23,42,0.8); z-index:1000;
+            align-items:flex-end; justify-content:center;
         }
-        .modal.active { display: flex; }
+        .modal.active { display:flex; }
         .modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 400px;
-            width: 100%;
+            background:white; border-radius:28px 28px 0 0;
+            padding:24px 24px 40px; width:100%; max-width:500px;
         }
-        .modal-content h2 {
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        .share-options {
-            display: grid;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+        .modal-handle { width:40px; height:4px; background:#e2e8f0; border-radius:2px; margin:0 auto 20px; }
+        .modal-content h2 { font-size:22px; font-weight:800; color:#1e293b; margin-bottom:18px; }
+        .share-options { display:grid; gap:10px; margin-bottom:14px; }
         .share-option {
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 10px;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            text-align: left;
-            font-weight: 600;
+            padding:16px; background:#f8fafc;
+            border-radius:14px; border:2px solid #e2e8f0;
+            font-size:16px; font-weight:600; color:#334155;
+            cursor:pointer; text-align:left;
         }
-        .share-option:active {
-            background: #e0e0e0;
-        }
+        .share-option:active { background:#f1f5f9; }
         textarea {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            min-height: 100px;
-            margin-bottom: 15px;
-            resize: vertical;
-            font-family: inherit;
+            width:100%; padding:14px;
+            border:2px solid #bfdbfe; border-radius:12px;
+            font-size:16px; min-height:100px;
+            margin-bottom:14px; resize:vertical;
+            font-family:inherit; color:#334155; outline:none;
         }
-        input[type="file"] {
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            width: 100%;
-        }
-        .hidden { display: none !important; }
+        input[type="file"] { margin-bottom:14px; padding:10px; border:2px solid #bfdbfe; border-radius:12px; width:100%; }
+        .hidden { display:none !important; }
     </style>
 </head>
 <body>
-    <!-- Splash Screen -->
+
+    <!-- Splash -->
     <div id="splashScreen" class="splash-screen">
-        <!-- Main Logo Circle with Eye -->
         <div class="splash-logo">
-            <!-- Orange gradient outer circle -->
             <div class="logo-orange">
-                <!-- Blue gradient inner circle -->
                 <div class="logo-blue">
-                    <!-- Lucide Eye, h-16 w-16, strokeWidth 1.5 -->
                     <svg class="logo-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                         <circle cx="12" cy="12" r="3"/>
                     </svg>
                 </div>
             </div>
-            <!-- Animated ping ring -->
             <div class="ring-ping"></div>
-            <!-- Animated pulse ring -->
             <div class="ring-pulse"></div>
         </div>
-
-        <!-- App Name -->
-        <div class="splash-text">
+        <div style="text-align:center">
             <div class="splash-title">SWIS</div>
             <p class="splash-sub">See What I See</p>
             <p class="splash-sub2">Share your world instantly</p>
         </div>
-
-        <!-- Connection Dots -->
         <div class="splash-dots">
-            <div class="sdot sdot-lg"></div>
-            <div class="sdot sdot-sm"></div>
-            <div class="sdot sdot-lg"></div>
-            <div class="sdot sdot-sm"></div>
+            <div class="sdot sdot-lg"></div><div class="sdot sdot-sm"></div>
+            <div class="sdot sdot-lg"></div><div class="sdot sdot-sm"></div>
             <div class="sdot sdot-lg"></div>
         </div>
     </div>
 
-    <!-- Welcome Screen -->
-    <div id="welcomeScreen" class="welcome-screen">
+    <!-- Welcome -->
+    <div id="welcomeScreen" class="welcome-screen" style="display:none">
         <div class="welcome-card">
-            <h1>📱</h1>
-            <h1 style="font-size: 42px; color: #667eea;">SWIS</h1>
-            <p class="tagline">See What I See<br>Real-time screen sharing for groups</p>
-            
+            <div class="welcome-logo">
+                <div class="welcome-logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                <div class="welcome-logo-text">
+                    <h1>SWIS</h1>
+                    <p>See What I See</p>
+                </div>
+            </div>
+            <p class="tagline">Real-time sharing for groups.<br>Create a room or join one instantly.</p>
             <button class="btn-primary" onclick="createRoom()">✨ Create New Room</button>
-            
-            <div class="divider">or join existing</div>
-            
-            <input type="text" id="joinCode" placeholder="Enter Room Code">
+            <div class="divider">— or join existing —</div>
+            <input type="text" id="joinCode" placeholder="Enter Room Code" maxlength="10">
             <button class="btn-primary" onclick="joinRoom()">🚪 Join Room</button>
-            
-            <div id="status" class="status">✅ Connected to Firebase</div>
+            <div id="status" class="status">✅ Connected</div>
         </div>
     </div>
 
     <!-- Room Screen -->
     <div id="roomScreen" class="room-screen">
+        <!-- Header -->
         <div class="room-header">
             <div class="header-left">
-                <!-- SWIS logo -->
                 <div class="header-logo">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                         <circle cx="12" cy="12" r="3"/>
                     </svg>
@@ -701,40 +429,88 @@
             </div>
             <button class="qr-btn" onclick="showQR()">📱 QR</button>
         </div>
-        
-        <!-- QR Code Overlay -->
+
+        <!-- QR Overlay -->
         <div class="qr-overlay" id="qrOverlay" onclick="hideQR()">
             <div class="qr-overlay-content" onclick="event.stopPropagation()">
                 <button class="qr-close" onclick="hideQR()">×</button>
-                <h3 style="color: #667eea; margin-bottom: 15px; font-size: 20px;">Scan to Join</h3>
-                <div id="qrCode">
-                    <div id="qrCanvas"></div>
-                    <p>Scan with your phone camera</p>
-                </div>
+                <h3 style="color:#f97316;margin-bottom:15px;font-size:20px;font-weight:800;">Scan to Join</h3>
+                <div id="qrCode"><div id="qrCanvas"></div><p>Scan with your phone camera</p></div>
             </div>
         </div>
-        
-        <div class="carousel-wrapper">
-            <div class="carousel-container" id="carouselContainer">
-                <button class="nav-arrow nav-left" id="navLeft" onclick="prevSlide()">‹</button>
-                <div class="cards-track" id="cardsTrack">
-                    <!-- Cards appear here -->
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="tabContent">
+
+            <!-- HOME -->
+            <div id="tabHome" class="carousel-wrapper">
+                <div class="carousel-container" id="carouselContainer">
+                    <button class="nav-arrow nav-left" id="navLeft" onclick="prevSlide()">‹</button>
+                    <div class="cards-track" id="cardsTrack"></div>
+                    <button class="nav-arrow nav-right" id="navRight" onclick="nextSlide()">›</button>
                 </div>
-                <button class="nav-arrow nav-right" id="navRight" onclick="nextSlide()">›</button>
+                <div class="control-bar">
+                    <button class="control-btn share-btn" onclick="openShareModal()">📤 Share</button>
+                    <button class="control-btn stop-btn" id="stopBtn" onclick="stopSharing()">⏹ Stop</button>
+                    <button class="control-btn leave-btn" onclick="leaveRoom()">👋 Leave</button>
+                </div>
+                <div class="carousel-dots" id="carouselDots"></div>
             </div>
+
+            <!-- FRIENDS -->
+            <div id="tabFriends" style="display:none">
+                <div class="section-header">
+                    <span class="section-title">Friends Online</span>
+                    <button class="btn-add">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Add Friend
+                    </button>
+                </div>
+                <div id="friendsList"></div>
+            </div>
+
+            <!-- GROUPS -->
+            <div id="tabGroups" style="display:none">
+                <div class="section-header">
+                    <span class="section-title">Your Groups</span>
+                    <button class="btn-add" onclick="createRoom()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        New Room
+                    </button>
+                </div>
+                <div id="groupsList">
+                    <div class="group-card">
+                        <div>
+                            <div class="group-name" id="currentRoomName">—</div>
+                            <div class="group-members"><span id="groupMemberCount">0</span> members</div>
+                        </div>
+                        <span class="active-badge" id="groupActiveCount">0 active</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        
-        <div class="carousel-dots" id="carouselDots"></div>
-        
-        <div class="control-bar">
-            <button class="control-btn share-btn" onclick="openShareModal()">
-                📤 Share
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+            <button class="nav-btn active" id="navHome" onclick="switchTab('home')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Home
             </button>
-            <button class="control-btn stop-btn" id="stopBtn" onclick="stopSharing()">
-                ⏹ Stop
+            <button class="nav-btn" id="navFriends" onclick="switchTab('friends')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+                Friends
             </button>
-            <button class="control-btn leave-btn" onclick="leaveRoom()">
-                👋 Leave
+            <button class="nav-btn" id="navGroups" onclick="switchTab('groups')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                </svg>
+                Groups
             </button>
         </div>
     </div>
@@ -742,18 +518,13 @@
     <!-- Share Modal -->
     <div id="shareModal" class="modal">
         <div class="modal-content">
+            <div class="modal-handle"></div>
             <h2>Share with group</h2>
             <div id="shareOptions">
                 <div class="share-options">
-                    <button class="share-option" onclick="selectShareType('photo')">
-                        📷 Photo / Screenshot
-                    </button>
-                    <button class="share-option" onclick="selectShareType('link')">
-                        🔗 Website Link
-                    </button>
-                    <button class="share-option" onclick="selectShareType('text')">
-                        💬 Message
-                    </button>
+                    <button class="share-option" onclick="selectShareType('photo')">📷 Photo / Screenshot</button>
+                    <button class="share-option" onclick="selectShareType('link')">🔗 Website Link</button>
+                    <button class="share-option" onclick="selectShareType('text')">💬 Message</button>
                 </div>
             </div>
             <div id="shareInput" class="hidden">
@@ -765,24 +536,25 @@
         </div>
     </div>
 
-    <!-- QR Code Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
-        // Splash screen — show for 3s then fade out
+        // Splash → Welcome transition
         window.addEventListener('DOMContentLoaded', () => {
             const splash = document.getElementById('splashScreen');
             setTimeout(() => {
                 splash.classList.add('fade-out');
-                setTimeout(() => splash.remove(), 500);
+                setTimeout(() => {
+                    splash.remove();
+                    document.getElementById('welcomeScreen').style.display = 'flex';
+                }, 500);
             }, 3000);
         });
     </script>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, set, onValue, remove } 
+        import { getDatabase, ref, set, onValue, remove }
             from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         const firebaseConfig = {
@@ -796,63 +568,53 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        const db  = getDatabase(app);
 
         let currentRoom = sessionStorage.getItem('swis_room') || null;
-        let currentUser = sessionStorage.getItem('swis_user') || 'User_' + Math.random().toString(36).substr(2, 6);
-        let shareType = null;
-        let currentSlide = 0;
-        let memberList = [];
-        
+        let currentUser = sessionStorage.getItem('swis_user') || 'User_' + Math.random().toString(36).substr(2,6);
+        let shareType = null, currentSlide = 0, memberList = [];
+
         sessionStorage.setItem('swis_user', currentUser);
-        
-        window.createRoom = createRoom;
-        window.joinRoom = joinRoom;
-        window.leaveRoom = leaveRoom;
-        window.openShareModal = openShareModal;
+
+        window.createRoom      = createRoom;
+        window.joinRoom        = joinRoom;
+        window.leaveRoom       = leaveRoom;
+        window.openShareModal  = openShareModal;
         window.closeShareModal = closeShareModal;
         window.selectShareType = selectShareType;
-        window.submitShare = submitShare;
-        window.stopSharing = stopSharing;
-        window.goToSlide = goToSlide;
-        window.nextSlide = nextSlide;
-        window.prevSlide = prevSlide;
-        window.showQR = showQR;
-        window.hideQR = hideQR;
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const roomFromUrl = urlParams.get('room');
-        
+        window.submitShare     = submitShare;
+        window.stopSharing     = stopSharing;
+        window.goToSlide       = goToSlide;
+        window.nextSlide       = nextSlide;
+        window.prevSlide       = prevSlide;
+        window.showQR          = showQR;
+        window.hideQR          = hideQR;
+        window.switchTab       = switchTab;
+
+        // Auto-join from QR or session (after splash)
+        const roomFromUrl = new URLSearchParams(window.location.search).get('room');
         if (roomFromUrl) {
-            joinRoomWithCode(roomFromUrl.toUpperCase());
+            setTimeout(() => joinRoomWithCode(roomFromUrl.toUpperCase()), 3600);
         } else if (currentRoom) {
-            joinRoomWithCode(currentRoom, true);
+            setTimeout(() => joinRoomWithCode(currentRoom, true), 3600);
         }
 
-        function createRoom() {
-            const code = generateCode();
-            joinRoomWithCode(code);
+        function switchTab(tab) {
+            document.getElementById('tabHome').style.display    = tab==='home'    ? 'flex'  : 'none';
+            document.getElementById('tabFriends').style.display = tab==='friends' ? 'block' : 'none';
+            document.getElementById('tabGroups').style.display  = tab==='groups'  ? 'block' : 'none';
+            ['Home','Friends','Groups'].forEach(t => {
+                document.getElementById('nav'+t).classList.toggle('active', tab===t.toLowerCase());
+            });
+            if (tab==='home') updateCarouselPosition();
         }
-        
-        function showQR() {
-            document.getElementById('qrOverlay').classList.add('active');
-        }
-        
-        function hideQR() {
-            document.getElementById('qrOverlay').classList.remove('active');
-        }
-        
-        window.addEventListener('resize', () => {
-            if (memberList.length > 0) {
-                updateCarouselPosition();
-            }
-        });
 
         function generateCode() {
-            const words = ['TABLE', 'SOFA', 'PUB', 'CAFE', 'DECK', 'BAR', 'ROOM'];
-            return words[Math.floor(Math.random() * words.length)] + 
-                   (Math.floor(Math.random() * 99) + 1);
+            const words = ['TABLE','SOFA','PUB','CAFE','DECK','BAR','ROOM'];
+            return words[Math.floor(Math.random()*words.length)] + (Math.floor(Math.random()*99)+1);
         }
+
+        function createRoom() { joinRoomWithCode(generateCode()); }
 
         function joinRoom() {
             const code = document.getElementById('joinCode').value.toUpperCase().trim();
@@ -860,79 +622,52 @@
             joinRoomWithCode(code);
         }
 
-        function joinRoomWithCode(code, isRejoin = false) {
+        function joinRoomWithCode(code, isRejoin=false) {
             currentRoom = code;
             sessionStorage.setItem('swis_room', code);
-            
-            const userRef = ref(db, `rooms/${code}/members/${currentUser}`);
-            set(userRef, {
-                name: currentUser,
-                joined: Date.now()
-            });
-
-            const membersRef = ref(db, `rooms/${code}/members`);
-            onValue(membersRef, (snapshot) => {
-                updateScreens();
-            });
-
-            const sharesRef = ref(db, `rooms/${code}/shares`);
-            onValue(sharesRef, (snapshot) => {
-                updateScreens();
-            });
-
+            set(ref(db, `rooms/${code}/members/${currentUser}`), { name: currentUser, joined: Date.now() });
+            onValue(ref(db, `rooms/${code}/members`), () => updateScreens());
+            onValue(ref(db, `rooms/${code}/shares`),  () => updateScreens());
             showRoom(isRejoin);
         }
 
-        function showRoom(isRejoin = false) {
+        function showRoom(isRejoin=false) {
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('roomScreen').classList.add('active');
             document.getElementById('displayCode').textContent = currentRoom;
-            
             const qrCanvas = document.getElementById('qrCanvas');
-            
             if (qrCanvas && !qrCanvas.querySelector('img')) {
-                qrCanvas.innerHTML = '';
-                const joinUrl = `https://jkconnollyengland-stack.github.io/swis-app/?room=${currentRoom}`;
                 new QRCode(qrCanvas, {
-                    text: joinUrl,
-                    width: 200,
-                    height: 200,
-                    colorDark: "#667eea",
-                    colorLight: "#ffffff",
+                    text: `https://jkconnollyengland-stack.github.io/swis-app/?room=${currentRoom}`,
+                    width:200, height:200, colorDark:'#f97316', colorLight:'#ffffff'
                 });
             }
-            
-            if (!isRejoin) {
-                updateScreens();
-            }
+            if (!isRejoin) updateScreens();
         }
 
+        function showQR() { document.getElementById('qrOverlay').classList.add('active'); }
+        function hideQR() { document.getElementById('qrOverlay').classList.remove('active'); }
+
         function updateScreens() {
-            const track = document.getElementById('cardsTrack');
-            const dotsContainer = document.getElementById('carouselDots');
-            
-            const membersRef = ref(db, `rooms/${currentRoom}/members`);
-            onValue(membersRef, (membersSnapshot) => {
-                const members = membersSnapshot.val() || {};
+            onValue(ref(db, `rooms/${currentRoom}/members`), membersSnap => {
+                const members = membersSnap.val() || {};
                 memberList = Object.keys(members);
-                const memberCount = memberList.length;
-                
-                document.getElementById('memberCount').textContent = memberCount;
-                
-                const sharesRef = ref(db, `rooms/${currentRoom}/shares`);
-                onValue(sharesRef, (sharesSnapshot) => {
-                    const shares = sharesSnapshot.val() || {};
-                    
-                    let html = '';
-                    let dotsHtml = '';
-                    
+                document.getElementById('memberCount').textContent = memberList.length;
+                document.getElementById('groupMemberCount').textContent = memberList.length;
+                document.getElementById('currentRoomName').textContent = currentRoom;
+
+                onValue(ref(db, `rooms/${currentRoom}/shares`), sharesSnap => {
+                    const shares = sharesSnap.val() || {};
+                    document.getElementById('groupActiveCount').textContent = Object.keys(shares).length + ' active';
+
+                    let cardsHtml='', dotsHtml='', friendsHtml='';
                     memberList.forEach((userId, index) => {
-                        const isMe = userId === currentUser;
+                        const isMe  = userId === currentUser;
                         const share = shares[userId];
-                        const shortName = isMe ? 'YOU' : userId.substr(5, 6).toUpperCase();
-                        
-                        html += `
-                            <div class="screen-card" data-index="${index}">
+                        const shortName = isMe ? 'YOU' : userId.substr(5,6).toUpperCase();
+
+                        cardsHtml += `
+                            <div class="screen-card">
                                 <div class="screen-header">
                                     <div class="user-name">${shortName}</div>
                                     ${share ? '<div class="live-badge">🔴 LIVE</div>' : ''}
@@ -940,251 +675,140 @@
                                 <div class="screen-content">
                                     ${share ? renderShare(share) : '<div class="empty-state">Not sharing</div>'}
                                 </div>
-                            </div>
-                        `;
-                        
-                        dotsHtml += `<div class="dot ${index === currentSlide ? 'active' : ''}" onclick="goToSlide(${index})"></div>`;
-                        
-                        if (isMe && share) {
-                            document.getElementById('stopBtn').classList.add('active');
-                        } else if (isMe && !share) {
-                            document.getElementById('stopBtn').classList.remove('active');
-                        }
+                            </div>`;
+
+                        dotsHtml += `<div class="dot ${index===currentSlide?'active':''}" onclick="goToSlide(${index})"></div>`;
+
+                        friendsHtml += `
+                            <div class="friend-card">
+                                <div class="avatar">${shortName.substring(0,2)}</div>
+                                <div class="friend-info">
+                                    <div class="friend-name">${shortName}</div>
+                                    <div class="friend-status">${share ? 'Sharing now' : 'In room'}</div>
+                                </div>
+                                ${share ? '<div class="sharing-dot"></div>' : '<div class="offline-dot"></div>'}
+                            </div>`;
+
+                        if (isMe) document.getElementById('stopBtn').classList.toggle('active', !!share);
                     });
-                    
-                    track.innerHTML = html;
-                    dotsContainer.innerHTML = dotsHtml;
-                    
+
+                    document.getElementById('cardsTrack').innerHTML  = cardsHtml;
+                    document.getElementById('carouselDots').innerHTML = dotsHtml;
+                    document.getElementById('friendsList').innerHTML  = friendsHtml || '<p style="color:#94a3b8;padding:20px 0">No one else in the room yet</p>';
+
                     updateCarouselPosition();
                     updateArrows();
                     setupSwipe();
-                }, { onlyOnce: true });
-            }, { onlyOnce: true });
+                }, {onlyOnce:true});
+            }, {onlyOnce:true});
+        }
+
+        function renderShare(share) {
+            if (share.type==='photo') return `<img src="${share.data}" alt="Shared">`;
+            if (share.type==='link')  return `<a href="${share.data}" target="_blank">${share.data}</a>`;
+            return `<p>${share.data}</p>`;
         }
 
         function updateCarouselPosition() {
             const track = document.getElementById('cardsTrack');
             const cards = track.querySelectorAll('.screen-card');
-            
-            if (cards.length === 0) return;
-            
-            const cardWidth = cards[0].offsetWidth;
-            const gap = 10;
-            const shiftLeft = (currentSlide * cardWidth) + (currentSlide * gap) + (cardWidth / 2);
-            
-            track.style.transform = `translateX(-${shiftLeft}px)`;
+            if (!cards.length) return;
+            const cw = cards[0].offsetWidth, gap = 12;
+            track.style.transform = `translateX(-${currentSlide*(cw+gap) + cw/2}px)`;
         }
 
         function goToSlide(index) {
             currentSlide = index;
             updateCarouselPosition();
-            
-            document.querySelectorAll('.dot').forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
+            document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i===index));
             updateArrows();
         }
-
-        function nextSlide() {
-            if (currentSlide < memberList.length - 1) {
-                goToSlide(currentSlide + 1);
-            }
-        }
-
-        function prevSlide() {
-            if (currentSlide > 0) {
-                goToSlide(currentSlide - 1);
-            }
-        }
-
+        function nextSlide() { if (currentSlide < memberList.length-1) goToSlide(currentSlide+1); }
+        function prevSlide() { if (currentSlide > 0) goToSlide(currentSlide-1); }
         function updateArrows() {
-            const leftArrow = document.getElementById('navLeft');
-            const rightArrow = document.getElementById('navRight');
-            
-            if (memberList.length > 1) {
-                leftArrow.classList.toggle('visible', currentSlide > 0);
-                rightArrow.classList.toggle('visible', currentSlide < memberList.length - 1);
-            } else {
-                leftArrow.classList.remove('visible');
-                rightArrow.classList.remove('visible');
-            }
+            document.getElementById('navLeft').classList.toggle('visible',  currentSlide > 0);
+            document.getElementById('navRight').classList.toggle('visible', currentSlide < memberList.length-1);
         }
 
-        let touchStartX = 0;
-        let touchEndX = 0;
-        let touchStartY = 0;
-        let isDragging = false;
-        
+        let txStart=0, tyStart=0, dragging=false;
         function setupSwipe() {
-            const container = document.getElementById('carouselContainer');
-            const track = document.getElementById('cardsTrack');
-            
-            container.replaceWith(container.cloneNode(true));
-            const newContainer = document.getElementById('carouselContainer');
-            const newTrack = document.getElementById('cardsTrack');
-            
-            newContainer.addEventListener('touchstart', e => {
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-                isDragging = true;
-                newTrack.style.transition = 'none';
-            }, { passive: true });
-            
-            newContainer.addEventListener('touchmove', e => {
-                if (!isDragging) return;
-                
-                const touchX = e.touches[0].clientX;
-                const touchY = e.touches[0].clientY;
-                const deltaX = touchX - touchStartX;
-                const deltaY = Math.abs(touchY - touchStartY);
-                
-                if (Math.abs(deltaX) > deltaY) {
+            const c = document.getElementById('carouselContainer');
+            c.replaceWith(c.cloneNode(true));
+            const nc = document.getElementById('carouselContainer');
+            const nt = document.getElementById('cardsTrack');
+            nc.addEventListener('touchstart', e => {
+                txStart=e.touches[0].clientX; tyStart=e.touches[0].clientY;
+                dragging=true; nt.style.transition='none';
+            }, {passive:true});
+            nc.addEventListener('touchmove', e => {
+                if (!dragging) return;
+                const dx = e.touches[0].clientX - txStart;
+                const dy = Math.abs(e.touches[0].clientY - tyStart);
+                if (Math.abs(dx) > dy) {
                     e.preventDefault();
-                    
-                    const cards = newTrack.querySelectorAll('.screen-card');
-                    if (cards.length === 0) return;
-                    
-                    const containerWidth = newContainer.offsetWidth;
-                    const cardWidth = cards[0].offsetWidth;
-                    const spacing = 10;
-                    const baseOffset = (containerWidth / 2) - (cardWidth / 2) - (currentSlide * (cardWidth + spacing));
-                    
-                    newTrack.style.transform = `translateX(${baseOffset + deltaX}px)`;
+                    const cards = nt.querySelectorAll('.screen-card');
+                    if (!cards.length) return;
+                    const cw=cards[0].offsetWidth, gap=12;
+                    nt.style.transform = `translateX(${-(currentSlide*(cw+gap)+cw/2) + dx}px)`;
                 }
-            }, { passive: false });
-            
-            newContainer.addEventListener('touchend', e => {
-                if (!isDragging) return;
-                isDragging = false;
-                
-                touchEndX = e.changedTouches[0].clientX;
-                const swipeDistance = touchStartX - touchEndX;
-                
-                newTrack.style.transition = 'transform 0.3s ease-out';
-                
-                if (Math.abs(swipeDistance) > 50) {
-                    if (swipeDistance > 0 && currentSlide < memberList.length - 1) {
-                        goToSlide(currentSlide + 1);
-                    } else if (swipeDistance < 0 && currentSlide > 0) {
-                        goToSlide(currentSlide - 1);
-                    } else {
-                        updateCarouselPosition();
-                    }
-                } else {
-                    updateCarouselPosition();
-                }
-            }, { passive: true });
+            }, {passive:false});
+            nc.addEventListener('touchend', e => {
+                if (!dragging) return; dragging=false;
+                const dist = txStart - e.changedTouches[0].clientX;
+                nt.style.transition = 'transform 0.3s ease-out';
+                if (Math.abs(dist)>50) {
+                    if (dist>0 && currentSlide<memberList.length-1) goToSlide(currentSlide+1);
+                    else if (dist<0 && currentSlide>0) goToSlide(currentSlide-1);
+                    else updateCarouselPosition();
+                } else updateCarouselPosition();
+            }, {passive:true});
         }
-        
-        function renderShare(share) {
-            if (share.type === 'photo') {
-                return `<img src="${share.data}" alt="Shared photo">`;
-            } else if (share.type === 'link') {
-                return `<a href="${share.data}" target="_blank">${share.data}</a>`;
-            } else {
-                return `<p>${share.data}</p>`;
-            }
-        }
+
+        window.addEventListener('resize', () => { if (memberList.length) updateCarouselPosition(); });
 
         function openShareModal() {
             document.getElementById('shareModal').classList.add('active');
             document.getElementById('shareOptions').classList.remove('hidden');
             document.getElementById('shareInput').classList.add('hidden');
         }
-
         function closeShareModal() {
             document.getElementById('shareModal').classList.remove('active');
             document.getElementById('textInput').value = '';
             document.getElementById('fileInput').value = '';
         }
-
         function selectShareType(type) {
             shareType = type;
             document.getElementById('shareOptions').classList.add('hidden');
             document.getElementById('shareInput').classList.remove('hidden');
-            
-            const text = document.getElementById('textInput');
-            const file = document.getElementById('fileInput');
-            
-            text.classList.add('hidden');
-            file.classList.add('hidden');
-            
-            if (type === 'photo') {
-                file.classList.remove('hidden');
-            } else {
-                text.classList.remove('hidden');
-                text.placeholder = type === 'link' ? 'https://example.com' : 'Type your message...';
-            }
+            document.getElementById('textInput').classList.toggle('hidden', type==='photo');
+            document.getElementById('fileInput').classList.toggle('hidden', type!=='photo');
+            if (type!=='photo') document.getElementById('textInput').placeholder = type==='link' ? 'https://example.com' : 'Type your message...';
         }
-
         async function submitShare() {
             let data = '';
-            
-            if (shareType === 'photo') {
+            if (shareType==='photo') {
                 const file = document.getElementById('fileInput').files[0];
                 if (!file) return alert('Please select a photo');
-                data = await readFile(file);
+                data = await new Promise(res => { const r=new FileReader(); r.onload=e=>res(e.target.result); r.readAsDataURL(file); });
             } else {
                 data = document.getElementById('textInput').value.trim();
                 if (!data) return alert('Please enter something to share');
             }
-            
-            const shareRef = ref(db, `rooms/${currentRoom}/shares/${currentUser}`);
-            await set(shareRef, {
-                type: shareType,
-                data: data,
-                timestamp: Date.now()
-            });
-            
+            await set(ref(db, `rooms/${currentRoom}/shares/${currentUser}`), { type:shareType, data, timestamp:Date.now() });
             closeShareModal();
         }
-
-        function readFile(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.readAsDataURL(file);
-            });
-        }
-
-        async function stopSharing() {
-            const shareRef = ref(db, `rooms/${currentRoom}/shares/${currentUser}`);
-            await remove(shareRef);
-        }
-
+        async function stopSharing() { await remove(ref(db, `rooms/${currentRoom}/shares/${currentUser}`)); }
         async function leaveRoom() {
             if (!confirm('Leave this room?')) return;
-            
             await cleanupUser();
-            
-            currentRoom = null;
-            sessionStorage.removeItem('swis_room');
-            
+            currentRoom=null; sessionStorage.removeItem('swis_room');
             document.getElementById('roomScreen').classList.remove('active');
-            document.getElementById('welcomeScreen').style.display = 'flex';
-            document.getElementById('joinCode').value = '';
+            document.getElementById('welcomeScreen').style.display='flex';
+            document.getElementById('joinCode').value='';
             document.getElementById('stopBtn').classList.remove('active');
+            currentSlide=0; memberList=[];
         }
-        
         async function cleanupUser() {
-            if (!currentRoom || !currentUser) return;
-            
-            const userRef = ref(db, `rooms/${currentRoom}/members/${currentUser}`);
-            const shareRef = ref(db, `rooms/${currentRoom}/shares/${currentUser}`);
-            
-            await remove(userRef);
-            await remove(shareRef);
-        }
-        
-        window.addEventListener('beforeunload', () => {
-            cleanupUser();
-        });
-        
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden && currentRoom) {
-                cleanupUser();
-            }
-        });
-    </script>
-</body>
-</html>
+            if (!currentRoom||!currentUser) return;
+            await remove(ref(db, `rooms/${currentRoom}/members/${currentUser}`));
+            await remove(ref(db, `rooms/$
