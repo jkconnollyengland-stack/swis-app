@@ -811,4 +811,10 @@
         async function cleanupUser() {
             if (!currentRoom||!currentUser) return;
             await remove(ref(db, `rooms/${currentRoom}/members/${currentUser}`));
-            await remove(ref(db, `rooms/$
+            await remove(ref(db, `rooms/${currentRoom}/shares/${currentUser}`));
+        }
+        window.addEventListener('beforeunload', cleanupUser);
+        document.addEventListener('visibilitychange', () => { if (document.hidden&&currentRoom) cleanupUser(); });
+    </script>
+</body>
+</html>
