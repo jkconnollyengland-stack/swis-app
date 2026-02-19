@@ -109,14 +109,14 @@
             background: white;
             border-radius: 14px;
             margin: 8px 12px;
-            padding: 0 12px;
+            padding: 0 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
-            height: 56px;          /* fixed height — nothing can overflow it */
-            overflow: hidden;      /* belt-and-braces clip */
+            height: 56px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+            gap: 8px;
         }
 
         .header-left {
@@ -125,21 +125,6 @@
             gap: 10px;
             flex: 1;
             min-width: 0;
-            overflow: hidden;
-        }
-
-        /* SVG logo container */
-        .swis-logo {
-            width: 38px;
-            height: 38px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .swis-logo svg {
-            width: 38px;
-            height: 38px;
         }
 
         /* ── SPLASH SCREEN ── */
@@ -681,15 +666,12 @@
     <div id="roomScreen" class="room-screen">
         <div class="room-header">
             <div class="header-left">
-                <!-- SWIS logo: Lovable style - orange ring, blue circle, eye -->
-                <div class="swis-logo" style="position:relative;width:38px;height:38px;">
-                    <div style="position:absolute;inset:0;border-radius:50%;border:2.5px solid #f97316;"></div>
-                    <div style="position:absolute;inset:5px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </div>
+                <!-- SWIS logo: orange ring + blue circle + eye, all inline, no absolute positioning -->
+                <div style="flex-shrink:0;width:40px;height:40px;border-radius:50%;border:3px solid #f97316;background:linear-gradient(135deg,#60a5fa,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;box-sizing:border-box;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
                 </div>
                 <div class="room-info">
                     <div class="room-code" id="displayCode"></div>
