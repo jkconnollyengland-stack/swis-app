@@ -357,6 +357,130 @@
         }
         input[type="file"] { margin-bottom:14px; padding:10px; border:2px solid #bfdbfe; border-radius:12px; width:100%; }
         .hidden { display:none !important; }
+
+        /* ── NAME MODAL ── */
+        .name-modal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15,23,42,0.85); z-index: 2000;
+            align-items: flex-end; justify-content: center;
+        }
+        .name-modal.active { display: flex; }
+        .name-modal-content {
+            background: white; border-radius: 28px 28px 0 0;
+            padding: 28px 24px 40px; width: 100%; max-width: 500px;
+        }
+        .name-modal-handle { width:40px; height:4px; background:#e2e8f0; border-radius:2px; margin:0 auto 20px; }
+        .name-modal-title { font-size:22px; font-weight:800; color:#1e293b; margin-bottom:6px; }
+        .name-modal-sub { font-size:14px; color:#64748b; margin-bottom:20px; }
+        .name-input {
+            width:100%; padding:16px; border-radius:14px;
+            border:2px solid #bfdbfe; font-size:18px;
+            margin-bottom:14px; text-align:center;
+            font-weight:700; color:#1e293b;
+            background:white; outline:none;
+            transition:border-color 0.2s;
+            text-transform: uppercase;
+        }
+        .name-input.lowercase { text-transform: none; }
+        .name-input:focus { border-color:#f97316; }
+
+        /* ── SAVED ROOMS SCREEN ── */
+        .rooms-screen {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 40%, #fed7aa 100%);
+            display: none; flex-direction: column;
+            align-items: center; padding: 0 20px 20px;
+            overflow-y: auto;
+        }
+        .rooms-screen.active { display: flex; }
+        .rooms-header {
+            width: 100%; max-width: 460px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 24px 0 16px;
+        }
+        .rooms-header-logo { display: flex; align-items: center; gap: 10px; }
+        .rooms-header-logo-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #f97316, #3b82f6);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .rooms-header-logo-icon svg { width: 18px; height: 18px; }
+        .rooms-header-title { font-size: 20px; font-weight: 800; color: #1e293b; }
+        .rooms-edit-btn {
+            background: rgba(255,255,255,0.7); border: none;
+            border-radius: 10px; padding: 8px 14px;
+            font-size: 13px; font-weight: 600; color: #64748b;
+        }
+        .rooms-greeting {
+            width: 100%; max-width: 460px;
+            font-size: 26px; font-weight: 800; color: #1e293b;
+            margin-bottom: 4px;
+        }
+        .rooms-greeting-sub {
+            width: 100%; max-width: 460px;
+            font-size: 14px; color: #64748b; margin-bottom: 24px;
+        }
+        .rooms-section-label {
+            width: 100%; max-width: 460px;
+            font-size: 13px; font-weight: 700; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 12px;
+        }
+        .saved-room-card {
+            width: 100%; max-width: 460px;
+            background: rgba(255,255,255,0.93);
+            border-radius: 20px; padding: 18px 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.12);
+            border: 2px solid rgba(191,219,254,0.4);
+            display: flex; align-items: center; gap: 16px;
+            cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .saved-room-card:active { transform: scale(0.98); box-shadow: 0 2px 10px rgba(59,130,246,0.1); }
+        .saved-room-emoji {
+            width: 52px; height: 52px; border-radius: 14px;
+            background: linear-gradient(135deg, #f97316, #3b82f6);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; flex-shrink: 0;
+        }
+        .saved-room-info { flex: 1; min-width: 0; }
+        .saved-room-name { font-size: 18px; font-weight: 800; color: #1e293b; }
+        .saved-room-meta { font-size: 13px; color: #64748b; margin-top: 2px; }
+        .saved-room-arrow { color: #cbd5e1; font-size: 22px; }
+        .saved-room-delete {
+            background: #fee2e2; border: none; border-radius: 10px;
+            width: 36px; height: 36px; font-size: 16px;
+            display: none; align-items: center; justify-content: center;
+            cursor: pointer; flex-shrink: 0;
+        }
+        .editing-mode .saved-room-delete { display: flex; }
+        .editing-mode .saved-room-arrow  { display: none; }
+        .rooms-new-btn {
+            width: 100%; max-width: 460px;
+            padding: 18px; border-radius: 18px;
+            background: rgba(255,255,255,0.7);
+            border: 2px dashed #bfdbfe;
+            font-size: 16px; font-weight: 700; color: #3b82f6;
+            margin-top: 4px; margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        /* Save room toggle inside room */
+        .save-room-bar {
+            background: rgba(255,255,255,0.85);
+            border-radius: 12px; margin: 0 12px 8px;
+            padding: 10px 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .save-room-label { font-size: 13px; font-weight: 600; color: #475569; }
+        .save-room-btn {
+            background: linear-gradient(135deg, #f97316, #3b82f6);
+            color: white; border: none; border-radius: 10px;
+            padding: 6px 14px; font-size: 12px; font-weight: 700;
+        }
+        .save-room-btn.saved { background: #dcfce7; color: #16a34a; }
     </style>
 </head>
 <body>
@@ -387,6 +511,31 @@
         </div>
     </div>
 
+
+    <!-- Saved Rooms Screen -->
+    <div id="roomsScreen" class="rooms-screen">
+        <div class="rooms-header">
+            <div class="rooms-header-logo">
+                <div class="rooms-header-logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                <span class="rooms-header-title">SWIS</span>
+            </div>
+            <button class="rooms-edit-btn" id="editRoomsBtn" onclick="toggleEditRooms()">Edit</button>
+        </div>
+        <div class="rooms-greeting" id="roomsGreeting">Hey there 👋</div>
+        <div class="rooms-greeting-sub">Tap a room to join</div>
+        <div class="rooms-section-label">YOUR ROOMS</div>
+        <div id="savedRoomsList" style="width:100%;max-width:460px"></div>
+        <button class="rooms-new-btn" onclick="showWelcomeFromRooms()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Join a different room
+        </button>
+    </div>
+
     <!-- Welcome -->
     <div id="welcomeScreen" class="welcome-screen" style="display:none">
         <div class="welcome-card">
@@ -403,10 +552,10 @@
                 </div>
             </div>
             <p class="tagline">Real-time sharing for groups.<br>Create a room or join one instantly.</p>
-            <button class="btn-primary" onclick="createRoom()">✨ Create New Room</button>
+            <button class="btn-primary" onclick="startCreate()">✨ Create New Room</button>
             <div class="divider">— or join existing —</div>
-            <input type="text" id="joinCode" placeholder="Enter Room Code" maxlength="10">
-            <button class="btn-primary" onclick="joinRoom()">🚪 Join Room</button>
+            <input type="text" id="joinCode" placeholder="Enter Room Name" maxlength="30">
+            <button class="btn-primary" onclick="startJoin()">🚪 Join Room</button>
             <div id="status" class="status">✅ Connected</div>
         </div>
     </div>
@@ -491,6 +640,13 @@
 
         </div>
 
+
+        <!-- Save Room Bar -->
+        <div class="save-room-bar" id="saveRoomBar">
+            <span class="save-room-label" id="saveRoomLabel">💾 Save this room?</span>
+            <button class="save-room-btn" id="saveRoomBtn" onclick="toggleSaveRoom()">Save Room</button>
+        </div>
+
         <!-- Bottom Nav -->
         <div class="bottom-nav">
             <button class="nav-btn active" id="navHome" onclick="switchTab('home')">
@@ -512,6 +668,21 @@
                 </svg>
                 Groups
             </button>
+        </div>
+    </div>
+
+    <!-- Name / Room Modal -->
+    <div id="nameModal" class="name-modal">
+        <div class="name-modal-content">
+            <div class="name-modal-handle"></div>
+            <div class="name-modal-title" id="nameModalTitle">Create a Room</div>
+            <div class="name-modal-sub" id="nameModalSub">Give your room a name, then tell us who you are</div>
+            <div id="roomNameField">
+                <input type="text" class="name-input" id="roomNameInput" placeholder="ROOM NAME" maxlength="30">
+            </div>
+            <input type="text" class="name-input lowercase" id="userNameInput" placeholder="Your name" maxlength="20">
+            <button class="btn-primary" id="nameModalBtn" onclick="confirmNameModal()">Let's Go! 🚀</button>
+            <button class="btn-secondary" onclick="closeNameModal()">Cancel</button>
         </div>
     </div>
 
@@ -539,14 +710,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
-        // Splash → Welcome transition
+        // Splash → Rooms or Welcome transition
         window.addEventListener('DOMContentLoaded', () => {
             const splash = document.getElementById('splashScreen');
             setTimeout(() => {
                 splash.classList.add('fade-out');
                 setTimeout(() => {
                     splash.remove();
-                    document.getElementById('welcomeScreen').style.display = 'flex';
+                    const savedRooms = JSON.parse(localStorage.getItem('swis_saved_rooms') || '[]');
+                    const roomFromUrl = new URLSearchParams(window.location.search).get('room');
+                    if (!roomFromUrl && savedRooms.length > 0) {
+                        window._showRoomsScreen();
+                    } else {
+                        document.getElementById('welcomeScreen').style.display = 'flex';
+                    }
                 }, 500);
             }, 3000);
         });
@@ -571,32 +748,165 @@
         const db  = getDatabase(app);
 
         let currentRoom = sessionStorage.getItem('swis_room') || null;
-        let currentUser = sessionStorage.getItem('swis_user') || 'User_' + Math.random().toString(36).substr(2,6);
+        let currentUser = sessionStorage.getItem('swis_user') || null;
+        let currentUserName = sessionStorage.getItem('swis_name') || null;
         let shareType = null, currentSlide = 0, memberList = [];
+        let pendingAction = null; // 'create' or 'join'
 
-        sessionStorage.setItem('swis_user', currentUser);
+        window.createRoom        = createRoom;
+        window.joinRoom          = joinRoom;
+        window.startCreate       = startCreate;
+        window.startJoin         = startJoin;
+        window.confirmNameModal  = confirmNameModal;
+        window.closeNameModal    = closeNameModal;
+        window.leaveRoom         = leaveRoom;
+        window.openShareModal    = openShareModal;
+        window.closeShareModal   = closeShareModal;
+        window.selectShareType   = selectShareType;
+        window.submitShare       = submitShare;
+        window.stopSharing       = stopSharing;
+        window.goToSlide         = goToSlide;
+        window.nextSlide         = nextSlide;
+        window.prevSlide         = prevSlide;
+        window.showQR            = showQR;
+        window.hideQR            = hideQR;
+        window.switchTab         = switchTab;
+        window.toggleSaveRoom    = toggleSaveRoom;
+        window.toggleEditRooms   = toggleEditRooms;
+        window.showWelcomeFromRooms = showWelcomeFromRooms;
+        window.joinSavedRoom     = joinSavedRoom;
+        window.deleteSavedRoom   = deleteSavedRoom;
 
-        window.createRoom      = createRoom;
-        window.joinRoom        = joinRoom;
-        window.leaveRoom       = leaveRoom;
-        window.openShareModal  = openShareModal;
-        window.closeShareModal = closeShareModal;
-        window.selectShareType = selectShareType;
-        window.submitShare     = submitShare;
-        window.stopSharing     = stopSharing;
-        window.goToSlide       = goToSlide;
-        window.nextSlide       = nextSlide;
-        window.prevSlide       = prevSlide;
-        window.showQR          = showQR;
-        window.hideQR          = hideQR;
-        window.switchTab       = switchTab;
+        // ── SAVED ROOMS HELPERS ──
+        function getSavedRooms() {
+            return JSON.parse(localStorage.getItem('swis_saved_rooms') || '[]');
+        }
+        function setSavedRooms(rooms) {
+            localStorage.setItem('swis_saved_rooms', JSON.stringify(rooms));
+        }
+        function isRoomSaved(roomCode) {
+            return getSavedRooms().some(r => r.code === roomCode);
+        }
+        function saveRoom(roomCode, displayName) {
+            const rooms = getSavedRooms();
+            if (!rooms.some(r => r.code === roomCode)) {
+                const emojis = ['🏠','🍺','🎮','🎵','🌍','⚽','🎬','📚','🍕','🎨'];
+                const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                rooms.unshift({ code: roomCode, name: roomCode.replace(/-/g,' '), emoji, savedAt: Date.now() });
+                setSavedRooms(rooms);
+            }
+            if (displayName) localStorage.setItem('swis_display_name', displayName);
+        }
+        function removeSavedRoom(roomCode) {
+            setSavedRooms(getSavedRooms().filter(r => r.code !== roomCode));
+        }
 
-        // Auto-join from QR or session (after splash)
+        // ── ROOMS SCREEN ──
+        window._showRoomsScreen = function() {
+            const rooms = getSavedRooms();
+            const name  = localStorage.getItem('swis_display_name') || '';
+            const greeting = name ? 'Hey ' + name + ' 👋' : 'Hey there 👋';
+            document.getElementById('roomsGreeting').textContent = greeting;
+            renderSavedRooms(rooms);
+            document.getElementById('roomsScreen').classList.add('active');
+        }
+
+        function renderSavedRooms(rooms) {
+            const list = document.getElementById('savedRoomsList');
+            list.innerHTML = rooms.map(r => `
+                <div class="saved-room-card" onclick="joinSavedRoom('${r.code}')">
+                    <div class="saved-room-emoji">${r.emoji || '🏠'}</div>
+                    <div class="saved-room-info">
+                        <div class="saved-room-name">${r.name}</div>
+                        <div class="saved-room-meta">Tap to join</div>
+                    </div>
+                    <button class="saved-room-delete" onclick="event.stopPropagation(); deleteSavedRoom('${r.code}')">🗑️</button>
+                    <div class="saved-room-arrow">›</div>
+                </div>
+            `).join('');
+        }
+
+        let editingRooms = false;
+        function toggleEditRooms() {
+            editingRooms = !editingRooms;
+            document.getElementById('savedRoomsList').classList.toggle('editing-mode', editingRooms);
+            document.getElementById('editRoomsBtn').textContent = editingRooms ? 'Done' : 'Edit';
+        }
+
+        function deleteSavedRoom(code) {
+            removeSavedRoom(code);
+            const rooms = getSavedRooms();
+            if (rooms.length === 0) {
+                document.getElementById('roomsScreen').classList.remove('active');
+                document.getElementById('welcomeScreen').style.display = 'flex';
+            } else {
+                renderSavedRooms(rooms);
+            }
+        }
+
+        function joinSavedRoom(code) {
+            if (editingRooms) return;
+            // If we have a stored name use it, otherwise ask
+            const storedName = localStorage.getItem('swis_display_name');
+            if (storedName) {
+                currentUserName = storedName;
+                currentUser = storedName.trim().replace(/[^a-zA-Z0-9]/g, '_') + '_' + Math.random().toString(36).substr(2,4);
+                sessionStorage.setItem('swis_user', currentUser);
+                sessionStorage.setItem('swis_name', currentUserName);
+                document.getElementById('roomsScreen').classList.remove('active');
+                joinRoomWithCode(code);
+            } else {
+                document.getElementById('roomsScreen').classList.remove('active');
+                startJoin(code);
+            }
+        }
+
+        function showWelcomeFromRooms() {
+            document.getElementById('roomsScreen').classList.remove('active');
+            document.getElementById('welcomeScreen').style.display = 'flex';
+        }
+
+        // ── SAVE ROOM BAR ──
+        function updateSaveRoomBar() {
+            if (!currentRoom) return;
+            const saved = isRoomSaved(currentRoom);
+            const btn   = document.getElementById('saveRoomBtn');
+            const label = document.getElementById('saveRoomLabel');
+            if (saved) {
+                btn.textContent = '✅ Saved';
+                btn.classList.add('saved');
+                label.textContent = '🏠 ' + currentRoom.replace(/-/g,' ') + ' is saved';
+            } else {
+                btn.textContent = 'Save Room';
+                btn.classList.remove('saved');
+                label.textContent = '💾 Save this room?';
+            }
+        }
+        function toggleSaveRoom() {
+            if (!currentRoom) return;
+            if (isRoomSaved(currentRoom)) {
+                removeSavedRoom(currentRoom);
+            } else {
+                saveRoom(currentRoom, currentUserName);
+            }
+            updateSaveRoomBar();
+        }
+
+        // Auto-join from QR (rooms screen / session handled by splash script)
         const roomFromUrl = new URLSearchParams(window.location.search).get('room');
         if (roomFromUrl) {
-            setTimeout(() => joinRoomWithCode(roomFromUrl.toUpperCase()), 3600);
-        } else if (currentRoom) {
-            setTimeout(() => joinRoomWithCode(currentRoom, true), 3600);
+            setTimeout(() => {
+                const storedName = localStorage.getItem('swis_display_name');
+                if (storedName) {
+                    currentUserName = storedName;
+                    currentUser = storedName.trim().replace(/[^a-zA-Z0-9]/g,'_') + '_' + Math.random().toString(36).substr(2,4);
+                    sessionStorage.setItem('swis_user', currentUser);
+                    sessionStorage.setItem('swis_name', currentUserName);
+                    joinRoomWithCode(roomFromUrl.toUpperCase());
+                } else {
+                    startJoin(roomFromUrl.toUpperCase());
+                }
+            }, 3600);
         }
 
         function switchTab(tab) {
@@ -609,23 +919,80 @@
             if (tab==='home') updateCarouselPosition();
         }
 
-        function generateCode() {
-            const words = ['TABLE','SOFA','PUB','CAFE','DECK','BAR','ROOM'];
-            return words[Math.floor(Math.random()*words.length)] + (Math.floor(Math.random()*99)+1);
+        function sanitiseRoomName(name) {
+            // Remove special chars, replace spaces with hyphens, uppercase
+            return name.trim().toUpperCase().replace(/[^A-Z0-9\s-]/g, '').replace(/\s+/g, '-').substring(0, 20);
         }
 
-        function createRoom() { joinRoomWithCode(generateCode()); }
+        function startCreate() {
+            pendingAction = 'create';
+            document.getElementById('nameModalTitle').textContent = 'Create a Room';
+            document.getElementById('nameModalSub').textContent = 'Give your room a name, then tell us who you are';
+            document.getElementById('roomNameField').style.display = 'block';
+            document.getElementById('roomNameInput').value = '';
+            document.getElementById('userNameInput').value = currentUserName || '';
+            document.getElementById('nameModal').classList.add('active');
+            document.getElementById('roomNameInput').focus();
+        }
+
+        function startJoin(prefillCode) {
+            pendingAction = 'join';
+            document.getElementById('nameModalTitle').textContent = 'Join a Room';
+            document.getElementById('nameModalSub').textContent = 'Enter the room name and your name';
+            document.getElementById('roomNameField').style.display = 'block';
+            document.getElementById('roomNameInput').value = prefillCode || document.getElementById('joinCode').value || '';
+            document.getElementById('userNameInput').value = currentUserName || '';
+            document.getElementById('nameModal').classList.add('active');
+            document.getElementById('userNameInput').focus();
+        }
+
+        function closeNameModal() {
+            document.getElementById('nameModal').classList.remove('active');
+            pendingAction = null;
+        }
+
+        function confirmNameModal() {
+            const roomInput = document.getElementById('roomNameInput').value.trim();
+            const nameInput = document.getElementById('userNameInput').value.trim();
+
+            if (!roomInput) return alert('Please enter a room name');
+            if (!nameInput) return alert('Please enter your name');
+
+            const roomCode = sanitiseRoomName(roomInput);
+            if (!roomCode) return alert('Room name can only contain letters, numbers and spaces');
+
+            // Save name
+            currentUserName = nameInput;
+            // Use name as user ID key (sanitised) + random suffix to avoid clashes
+            currentUser = nameInput.trim().replace(/[^a-zA-Z0-9]/g, '_') + '_' + Math.random().toString(36).substr(2,4);
+            sessionStorage.setItem('swis_user', currentUser);
+            sessionStorage.setItem('swis_name', currentUserName);
+
+            closeNameModal();
+            joinRoomWithCode(roomCode);
+        }
+
+        function createRoom() { startCreate(); }
 
         function joinRoom() {
-            const code = document.getElementById('joinCode').value.toUpperCase().trim();
-            if (!code) return alert('Please enter a room code');
-            joinRoomWithCode(code);
+            const code = document.getElementById('joinCode').value.trim();
+            if (!code) return alert('Please enter a room name');
+            startJoin(code);
         }
 
         function joinRoomWithCode(code, isRejoin=false) {
             currentRoom = code;
             sessionStorage.setItem('swis_room', code);
-            set(ref(db, `rooms/${code}/members/${currentUser}`), { name: currentUser, joined: Date.now() });
+            // If rejoining without a name, generate a fallback
+            if (!currentUser) {
+                currentUser = 'user_' + Math.random().toString(36).substr(2,6);
+                sessionStorage.setItem('swis_user', currentUser);
+            }
+            if (!currentUserName) {
+                currentUserName = currentUser.split('_')[0];
+                sessionStorage.setItem('swis_name', currentUserName);
+            }
+            set(ref(db, `rooms/${code}/members/${currentUser}`), { name: currentUserName, joined: Date.now() });
             onValue(ref(db, `rooms/${code}/members`), () => updateScreens());
             onValue(ref(db, `rooms/${code}/shares`),  () => updateScreens());
             showRoom(isRejoin);
@@ -633,8 +1000,10 @@
 
         function showRoom(isRejoin=false) {
             document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('roomsScreen').classList.remove('active');
             document.getElementById('roomScreen').classList.add('active');
-            document.getElementById('displayCode').textContent = currentRoom;
+            document.getElementById('displayCode').textContent = currentRoom.replace(/-/g, ' ');
+            updateSaveRoomBar();
             const qrCanvas = document.getElementById('qrCanvas');
             if (qrCanvas && !qrCanvas.querySelector('img')) {
                 new QRCode(qrCanvas, {
@@ -664,7 +1033,8 @@
                     memberList.forEach((userId, index) => {
                         const isMe  = userId === currentUser;
                         const share = shares[userId];
-                        const shortName = isMe ? 'YOU' : userId.substr(5,6).toUpperCase();
+                        const memberName = members[userId]?.name || userId;
+                        const shortName = isMe ? 'YOU (' + currentUserName + ')' : memberName;
 
                         cardsHtml += `
                             <div class="screen-card">
@@ -803,10 +1173,16 @@
             await cleanupUser();
             currentRoom=null; sessionStorage.removeItem('swis_room');
             document.getElementById('roomScreen').classList.remove('active');
-            document.getElementById('welcomeScreen').style.display='flex';
             document.getElementById('joinCode').value='';
             document.getElementById('stopBtn').classList.remove('active');
             currentSlide=0; memberList=[];
+            // Go back to saved rooms if any, else welcome
+            const savedRooms = getSavedRooms();
+            if (savedRooms.length > 0) {
+                window._showRoomsScreen();
+            } else {
+                document.getElementById('welcomeScreen').style.display='flex';
+            }
         }
         async function cleanupUser() {
             if (!currentRoom||!currentUser) return;
